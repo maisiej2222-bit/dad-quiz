@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>爸爸图鉴｜Father's Day 2026</title>
+<style>
+:root{--bg:#0a0a14;--text:#f0ece6;--text2:#a09c94;--text3:#605c54;--surface:rgba(255,255,255,0.04);--font:'PingFang SC','Microsoft YaHei',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);font-family:var(--font);color:var(--text);min-height:100dvh;overflow-x:hidden;background-image:radial-gradient(ellipse at 20% 20%,rgba(120,80,255,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 60%,rgba(255,80,180,0.06) 0%,transparent 50%),radial-gradient(ellipse at 50% 90%,rgba(80,200,255,0.05) 0%,transparent 40%)}
+#app{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem}
+.screen{display:none;flex-direction:column;align-items:center;width:100%;max-width:420px}
+.screen.active{display:flex}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:0.75rem 2.2rem;font-size:0.95rem;font-weight:800;border:none;border-radius:999px;cursor:pointer;font-family:var(--font);background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff;box-shadow:0 6px 30px rgba(139,92,246,0.3);transition:all 0.3s;letter-spacing:0.03em}
+.btn:active{transform:scale(0.95)}
+.btn-sm{padding:0.45rem 1.3rem;font-size:0.78rem;font-weight:700}
+h1{font-size:2.2rem;font-weight:900;letter-spacing:0.06em;background:linear-gradient(135deg,#a78bfa,#ec4899,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.3rem;text-align:center;line-height:1.3}
+.subtitle{font-size:0.8rem;color:var(--text3);letter-spacing:0.08em;margin-bottom:1.8rem;text-align:center}
+.track-cards{display:flex;gap:0.7rem;width:100%}
+.track-card{flex:1;padding:1.6rem 0.9rem;text-align:center;background:var(--surface);border:2px solid rgba(255,255,255,0.08);border-radius:20px;cursor:pointer;transition:all 0.35s}
+.track-card:hover{border-color:rgba(139,92,246,0.35);transform:translateY(-4px)}
+.track-card.selected{border-color:#a78bfa;background:rgba(139,92,246,0.1)}
+.track-emoji{font-size:2.4rem;margin-bottom:0.4rem}
+.track-label{font-size:0.95rem;font-weight:800;margin-bottom:0.25rem}
+.track-hint{font-size:0.68rem;color:var(--text2);line-height:1.5}
+.quiz-progress{display:flex;gap:0.25rem;margin-bottom:0.8rem}
+.quiz-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.12);transition:all 0.3s}
+.quiz-dot.done{background:#a78bfa}
+.quiz-counter{font-size:0.65rem;color:var(--text3);font-weight:700;letter-spacing:0.1em;margin-bottom:0.6rem}
+.quiz-q{font-size:1.1rem;font-weight:700;text-align:center;margin-bottom:1rem;line-height:1.6;background:linear-gradient(135deg,#c4b5fd,#f9a8d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+#qz-opts{display:flex;flex-direction:column;gap:0.35rem;width:100%}
+.opt{padding:0.72rem 0.9rem;border-radius:13px;background:var(--surface);border:2px solid rgba(255,255,255,0.08);cursor:pointer;transition:all 0.2s;font-size:0.8rem;line-height:1.45}
+.opt:hover{border-color:rgba(139,92,246,0.3);background:rgba(255,255,255,0.05)}
+.opt.sel{border-color:#a78bfa;background:rgba(139,92,246,0.12)}
+.opt.custom{border-style:dashed}
+.custom-wrap{display:none;margin-top:0.4rem}
+.custom-wrap.show{display:block}
+.custom-input{width:100%;padding:0.7rem 0.9rem;border-radius:13px;background:var(--surface);border:2px solid rgba(255,255,255,0.12);color:var(--text);font-family:var(--font);font-size:0.8rem;resize:none;outline:none}
+.custom-input:focus{border-color:#a78bfa}
+.result-card{width:100%;padding:2rem 1.4rem;text-align:center;background:var(--surface);border:2px solid rgba(255,255,255,0.1);border-radius:24px;backdrop-filter:blur(12px)}
+.result-emoji{font-size:3.5rem;margin-bottom:0.4rem}
+.result-name{font-size:1.6rem;font-weight:900;margin-bottom:0.25rem}
+.result-tag{font-size:0.78rem;color:var(--text2);margin-bottom:0.8rem;line-height:1.5}
+.result-desc{font-size:0.78rem;color:var(--text);line-height:1.7;margin-bottom:0.8rem}
+.bar-row{display:flex;align-items:center;gap:0.4rem;margin-bottom:0.3rem}
+.bar-label{font-size:0.68rem;color:var(--text2);min-width:52px;text-align:right}
+.bar-wrap{flex:1;height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width 1s cubic-bezier(0.34,1.56,0.64,1)}
+.bar-val{font-size:0.65rem;color:var(--text3);font-weight:700;width:26px}
+.msg-block{margin-top:1rem;padding:0.85rem;background:rgba(255,255,255,0.03);border-radius:16px;border:1px solid rgba(255,255,255,0.06)}
+.msg-label{font-size:0.65rem;color:var(--text3);letter-spacing:0.06em;margin-bottom:0.4rem}
+.msg-text{font-size:0.85rem;font-weight:700;line-height:1.6;font-style:italic}
+.msg-auth{font-size:0.72rem;margin-top:0.3rem}
+.btns-row{display:flex;gap:0.5rem;justify-content:center;margin-top:1.2rem;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="screen active" id="sc-start"><h1>爸爸图鉴</h1><p class="subtitle">Father's Day 2026 · 娱乐向测试</p>
+<div class="track-cards">
+<div class="track-card" id="track-a" onclick="Q.pickTrack('a',this)"><div class="track-emoji">&#x1F468;</div><div class="track-label">我爸爸是哪款</div><div class="track-hint">测测我家那位</div></div>
+<div class="track-card" id="track-b" onclick="Q.pickTrack('b',this)"><div class="track-emoji">&#x1FA9E;</div><div class="track-label">我是哪款爸爸</div><div class="track-hint">看看我自己</div></div>
+</div>
+</div></div>
+<div id="poster-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:999;overflow-y:auto;-webkit-overflow-scrolling:touch;align-items:flex-start;justify-content:center;padding:1rem" onclick="if(event.target===this)this.style.display='none'"><div style="background:#111;border-radius:20px;padding:1rem;max-width:400px;width:100%;text-align:center;margin:1rem 0"><h3 style="font-weight:800;margin-bottom:0.4rem">你的爸爸图鉴</h3><img id="poster-img" style="width:100%;border-radius:12px;margin:0.5rem 0" alt="海报"><p style="font-size:0.65rem;color:#888;margin:0.3rem 0">长按保存 · 或点击下载</p><div style="display:flex;gap:0.4rem;justify-content:center"><button class="btn btn-sm" onclick="Q.dlPoster()">下载</button><button class="btn btn-sm" onclick="document.getElementById('poster-modal').style.display='none'" style="background:rgba(255,255,255,0.1);box-shadow:none">关闭</button></div></div></div>
+</div>
+<script>
+var TYPES=[
+{id:'benchmark',emoji:String.fromCodePoint(0x1F3C6),name:'别人家爸爸',tag:'童年阴影——不存在但人人认识。',desc:'无所不能、从不发火。家长群的传说、妈妈口中的标杆。唯一缺点：不是你爸。但你爸在别人眼里也是"别人家爸爸"。',color:'#f59e0b',color2:'#fbbf24',dims:[{l:'完美度',v:99},{l:'真实感',v:3},{l:'距离感',v:95},{l:'嫉妒值',v:100}],msgs:['别人家爸爸不会老——他活在别人的嘴里。','你永远赢不了——但你的孩子也觉得你是"别人家爸爸"。','他只展示高光时刻，其余时间不存在。','别焦虑，你爸在别人眼里也是传奇。'],auth:'— 民间传说研究中心'},
+{id:'social',emoji:String.fromCodePoint(0x1F4F1),name:'朋友圈运营官',tag:'不是"好不好玩"——是"好不好拍"。',desc:'朋友圈是他真正的舞台。九宫格精修、文案克制却有温度。他爱孩子是真的——但需要被看见也是真的。每张温馨照背后，客厅乱成一团且你妈一脸疲惫。但那份用心没人能否认。',color:'#ec4899',color2:'#f9a8d4',dims:[{l:'出片率',v:98},{l:'精修度',v:92},{l:'亲子投入',v:78},{l:'点赞量',v:85}],msgs:['他的爱不需要被质疑——需要被点赞。','养娃是场秀，他是最敬业的策划人。','朋友圈里的爸爸比现实温柔30%——这是算法。','每张精修照后面都有被踢出画面的垃圾桶。'],auth:'— 点赞追踪科'},
+{id:'atm',emoji:String.fromCodePoint(0x1F4B3),name:'沉默的ATM机',tag:'情感表达：转账。极其单一、极其可靠。',desc:'话少、表情少——账户流水不少。不会说"我爱你"，但会秒回"多少"。直到你翻他相册——全是你的照片，一张没发过。中国式父爱的终极形态：爱在沉默里，钱在转账里。',color:'#10b981',color2:'#6ee7b7',dims:[{l:'转账速度',v:99},{l:'话语量',v:8},{l:'存照量',v:95},{l:'表达能力',v:15}],msgs:['从"爸"到"叮"——父爱转账时速：1.7秒。','他以为不会表达——但你的每笔转账都截图了。','中国父亲情感输出接口：只有一个，叫打钱。','翻他手机相册——你会发现一座看不见的博物馆。'],auth:'— 父爱转账课题组'},
+{id:'askmom',emoji:String.fromCodePoint(0x1F937),name:'听你妈的型',tag:'一键转交家庭CEO——你妈。',desc:'"爸，我想……""问你妈。"不是不负责任——他真心认为你妈才是家庭主处理器。但危急时刻无人可问，他会放下修了半年的收音机："怎么了，跟你妈闹别扭了？"他只是选择不干预——不是不能。',color:'#6366f1',color2:'#a5b4fc',dims:[{l:'甩锅速度',v:97},{l:'自主决策',v:6},{l:'背后可靠',v:88},{l:'存在感',v:55}],msgs:['"问你妈"不是推卸——是对伴侣的绝对信任。','他的人生模式：自动跟随队友。','无人可问时会自己站起来。','重大决定只有一个意见："跟你妈商量好。"'],auth:'— 决策转移观测站'},
+{id:'ghost',emoji:String.fromCodePoint(0x1F47B),name:'半透明型',tag:'他在。他刚才还在。等等他什么时候出去的？',desc:'存在感趋近于零。爱在静音模式。你以为他缺席了童年——直到听说你每次生病他都请假陪床。他把自己变成背景，让你在前面发光。最好理解的比喻：空气。一直在呼吸——只是没注意。',color:'#6b7280',color2:'#d1d5db',dims:[{l:'隐身技能',v:99},{l:'被察觉率',v:12},{l:'关键时刻',v:96},{l:'日常陪伴',v:25}],msgs:['最成功的存在：你不知道他在，但他永远在。','隐身是为了让你飞更远——他的底层代码。','危机时刻不透明度自动上调至100%。','空气从不说爱——但你每口呼吸都需要它。'],auth:'— 隐身技术研究所'},
+{id:'startup',emoji:String.fromCodePoint(0x1F9E0),name:'教育项目总监',tag:'不养孩子——"运营"一个成长项目。',desc:'3岁英语启蒙，5岁升学路线，7岁十年计划。一次考试失利→连夜PPT复盘。想养猫？他拿出《宠物饲养与责任教育可行性分析_v3》。邻居说他比教育局长懂教育——但执行由你妈负责。',color:'#0891b2',color2:'#67e8f9',dims:[{l:'理论值',v:99},{l:'松弛感',v:8},{l:'PPT技能',v:95},{l:'孩子压力',v:88}],msgs:['养孩子当项目管理——每个里程碑必须交付。','最可怕的话："你爸给你制定了一个计划。"','育儿书比书架大——第一本应该写《学会放手》。','季度复盘多打几分——他真的在看。'],auth:'— 家庭项目管理分会'},
+{id:'bro',emoji:String.fromCodePoint(0x1F91D),name:'无代沟玩家',tag:'不说教——因为他自己还没长大。',desc:'最开心的不是毕业典礼，是打游戏段位比你高。带你逃课、教销毁厨房犯罪现场、分享冰箱顶秘密零食。哲学："规矩用来打破——但要在妈妈发现之前。"你妈吐槽养了两个儿子——但说出来时在笑。',color:'#f97316',color2:'#fdba74',dims:[{l:'兄弟感',v:98},{l:'威严度',v:4},{l:'游戏段位',v:85},{l:'会挨骂',v:92}],msgs:['"对抗老妈"副本里的双人队友。','最成功的父子：一起被妈妈骂。','他教的第一课：做坏事不要留证据。','他只是用你的童年，重新活一次自己。'],auth:'— 游戏联机分会'},
+{id:'surveillance',emoji:String.fromCodePoint(0x1F441,0xFE0F),name:'全息监控型',tag:'不在问——是在更新实时数据库。',desc:'定位他装，朋友圈屏蔽对象他研究。每个朋友家庭背景、成绩了如指掌。早恋？连对方中考排名都查过。恐怖之处也是感人之处：危险发生时，全世界第一个出现的就是他。',color:'#dc2626',color2:'#fca5a5',dims:[{l:'监控半径',v:100},{l:'隐私概念',v:2},{l:'响应速度',v:99},{l:'技术手段',v:85}],msgs:['不是控制狂——是"末日十分钟内赶到"综合症。','他对你的了解比你多30%。','小时候恨死追踪——长大在异乡哭着打给他。','数据全面度约等于中型情报机构。'],auth:'— 全时段监控中心'},
+{id:'socialite',emoji:String.fromCodePoint(0x1F389),name:'社交蝴蝶型',tag:'永远在饭局上——朋友圈比通讯录还厚。',desc:'不是在聚会就是在去聚会的路上。家长群主是他，校友会干事是他，社区足球队队长也是他。孩子从小在饭桌上听了无数大人故事——八岁就会劝酒、十岁能帮叔叔阿姨调解矛盾。他自己做决定的能力是练出来的——因为老爸总在忙别人的事。但这种"散养"意外地让孩子很独立。',color:'#14b8a6',color2:'#5eead4',dims:[{l:'社交半径',v:99},{l:'在家时间',v:15},{l:'孩子独立',v:92},{l:'人脉资源',v:98}],msgs:['他在外面拯救世界——你顺便学会了拯救自己。','最忙的父亲养出最独立的孩子——意外还是注定？','你的童年被饭局包围——但你拥有了全世界最广的人脉。','他不是缺席——他是在帮你搭建未来的社交网络。'],auth:'— 社交网络研究所'},
+{id:'zen',emoji:String.fromCodePoint(0x1F9D8),name:'佛系随缘型',tag:'一切随缘——包括孩子的教育。',desc:'"考多少分随缘吧""选什么专业你自己决定""人生嘛开心就好"。他有一种令人羡慕的松弛感——天塌下来也是饭后再讨论。孩子从小自己做主、自己承担后果——因为他给的不是指令，是空间。这种教育方法的副作用是：孩子特别有主见，但偶尔会怀疑自己是不是被放弃了。实际上他只是在用一种奇怪的方式说"我相信你能行"。',color:'#8b5cf6',color2:'#c4b5fd',dims:[{l:'松弛感',v:99},{l:'指令性',v:2},{l:'孩子独立',v:95},{l:'存在感',v:40}],msgs:['"随缘"不是放弃——是宇宙间最深的信任。','他给你空间，你给自己方向。','最佛系的父亲，养出最果断的孩子。','你以为他不关心——其实他只是从不怀疑你能行。'],auth:'— 随缘研究中心'},
+{id:'workaholic',emoji:String.fromCodePoint(0x1F4BC),name:'永远在加班型',tag:'物理距离20公里，时差感觉像跨国。',desc:'工作时间表是他的生物钟。家长会？尽量。毕业典礼？但翻照片——他每次都站在最后一排。他的爱是延期支付，从不违约，利息是愧疚加倍补偿。周末两天过出七天的质量——加班族父亲的超能力。',color:'#475569',color2:'#94a3b8',dims:[{l:'加班时长',v:99},{l:'出席率',v:35},{l:'愧疚补偿',v:95},{l:'周末质量',v:90}],msgs:['缺席日常但未缺席人生节点——只是站在后排。','他的爱是延期支付——从不违约且有利息。','周末过出七天质量——加班族超能力。','等你工作了才懂：他不是不想来，是真走不开。'],auth:'— 加班文化研究中心'},
+{id:'wellness',emoji:String.fromCodePoint(0x1F33F),name:'养生玄学型',tag:'冰箱是中药铺，早晨从拍打经络开始。',desc:'电器旁贴"辐射警告"。油炸是违禁品，白开水标配枸杞。能花两小时论证不能喝冰可乐——从经络到五行到量子物理。你觉得他疯了？但全家确实三年没感冒。养生理论混合了中医、气功和朋友圈爆款——但好像有用。',color:'#84cc16',color2:'#bef264',dims:[{l:'养生知识',v:98},{l:'科学依据',v:15},{l:'家人健康',v:92},{l:'被吐槽度',v:88}],msgs:['冰可乐有害——他有8个版本，最长版3小时。','你觉得他胡说——但你们家确实三年没感冒。','理论混合中医+量子力学+朋友圈爆款。','有一天你会转发他的养生文章——那是老了。'],auth:'— 玄学养生协会'},
+{id:'midlife',emoji:String.fromCodePoint(0x1F3CD,0xFE0F),name:'中年觉醒型',tag:'突然买了摩托车/电吉他/露营装备。全家沉思中。',desc:'40岁后开始重新活。学滑板、组乐队、跑马拉松——年轻时没这么酷。他正完成18岁愿望清单，晚了二十年。你觉得他疯了——但你所有朋友都说"你爸太酷了"。摩托车后座永远留给你——虽然你不太敢坐。',color:'#eab308',color2:'#fde68a',dims:[{l:'行动力',v:95},{l:'合理性',v:20},{l:'酷度',v:90},{l:'家人困惑',v:88}],msgs:['不是疯了——是把20岁梦想推迟二十年。','后座永远留给你——虽然你有点不敢坐。','中年危机？不，这是迟到的青春期。','你敢笑他？等你40岁未必有他的勇气。'],auth:'— 中年觉醒观察站'},
+{id:'diy',emoji:String.fromCodePoint(0x1F528),name:'手工耿型',tag:'没有一样东西是原装的。效果见仁见智。',desc:'万物皆可改造。自动浇花淹了阳台，智能门锁把全家锁外面，自制投影仪像毕加索。每件发明需要配合表演："哇太厉害了！"——但有些确实厉害。隔壁小孩都来参观，你家像科学博物馆。发明成功率20%，快乐产出率100%。',color:'#c2410c',color2:'#fdba74',dims:[{l:'动手能力',v:95},{l:'成品实用',v:18},{l:'创意值',v:99},{l:'破坏力',v:85}],msgs:['座右铭：坏了没关系——修的过程最好玩。','每件东西都有他的指纹——有时是烙上去的。','成功率20%，快乐率100%。','邻居孩子都来——比科技馆好玩。'],auth:'— 民间发明家协会'}
+];
+
+var QUESTIONS=[
+{qa:'家长群有人凡尔赛孩子成绩，你爸/你会？',qb:'家长群有人凡尔赛孩子成绩，你会？',opts:[
+{t:'立刻发更凡的——"我家也就省一"',id:'benchmark'},
+{t:'截图发圈——"分享一下喜悦"',id:'social'},
+{t:'关群，打钱，"不够跟爸说"',id:'atm'},
+{t:'手机给你妈，"你看看！"继续看电视',id:'askmom'},
+{t:'连夜做《成绩对比分析》召开目标对齐会',id:'startup'},
+{t:'"比孩子不如比爸爸——你爸挣多少？"',id:'bro'},
+{t:'刚在饭局上认识那孩子他爸——打了个招呼',id:'socialite'},
+{t:'"随缘吧，孩子自己会找到路的"',id:'zen'}]},
+{qa:'孩子带了个奇怪朋友回家，他/你第一反应？',qb:'孩子带了个奇怪朋友回家，你第一反应？',opts:[
+{t:'"你看人家孩子！"（惯性比较启动）',id:'benchmark'},
+{t:'找好合影角度准备配文"小朋友很不错"',id:'social'},
+{t:'没说话。人走后发现口袋被塞了两百',id:'atm'},
+{t:'礼貌三连：成绩？规划？要辅导班吗？',id:'startup'},
+{t:'聊半小时发现段位高，立刻加好友',id:'bro'},
+{t:'人走后四个渠道打听完全部背景',id:'surveillance'},
+{t:'"你自己决定要不要交这个朋友，我信你"',id:'zen'},
+{t:'端出自己做的养生零食——对方震惊',id:'wellness'}]},
+{qa:'失败/搞砸了，他/你安慰的方式？',qb:'孩子失败了找你，你安慰的方式？',opts:[
+{t:'"你看别人家孩子失败成啥样了！"比惨安慰',id:'benchmark'},
+{t:'没说。第二天账户多一笔"买点好吃的"',id:'atm'},
+{t:'"找你妈聊聊——她比我懂"门外站了全程',id:'askmom'},
+{t:'你没告诉他——他发现了。三天后书桌多了本书',id:'ghost'},
+{t:'当场复盘，全程"我们"，PPT三大改进方向',id:'startup'},
+{t:'"走！打球撸串开黑！玩够了重来！"',id:'bro'},
+{t:'请了半天假——全年唯一一次。带你去散心',id:'workaholic'},
+{t:'分享了自己失败最惨的一次——比你惨十倍',id:'midlife'}]},
+{qa:'《爸爸语录》最经典的一句？',qb:'你的经典台词最可能？',opts:[
+{t:'"你看人家……"（可填任何事物）',id:'benchmark'},
+{t:'"等一下我先拍"——任何场合',id:'social'},
+{t:'"钱够不够"——90%对话的开场',id:'atm'},
+{t:'"问你妈/找你妈/听你妈的"三部曲',id:'askmom'},
+{t:'无。话太少，凑不出一本书',id:'ghost'},
+{t:'"我早就知道了"——脊背发凉',id:'surveillance'},
+{t:'"你自己决定吧——我相信你"',id:'zen'},
+{t:'"等我忙完这一阵"——听了一辈子',id:'workaholic'}]},
+{qa:'周末最可能在家的哪个位置？',qb:'周末最可能在哪找到你？',opts:[
+{t:'给亲戚汇报孩子近况——精修版',id:'benchmark'},
+{t:'沙发同一位置十年——完美父形凹坑',id:'atm'},
+{t:'跟着你妈亦步亦趋——像温顺大型犬',id:'askmom'},
+{t:'找不到。但茶杯是温的电视是热的',id:'ghost'},
+{t:'跟孩子抢游戏机/教用BUG通关',id:'bro'},
+{t:'窗口。视野覆盖小区大门和公交站',id:'surveillance'},
+{t:'不在家——在朋友聚会/校友活动/行业论坛',id:'socialite'},
+{t:'在"工作室"（车库角落）拆第三台旧电器',id:'diy'}]},
+{qa:'突然天降100万，他/你第一反应？',qb:'天降100万，你的第一反应？',opts:[
+{t:'建立"成长基金"，制定15年投资回报计划',id:'startup'},
+{t:'存起来。"以后用得上。"——继续吃十块快餐',id:'atm'},
+{t:'存入秘密账户。受益人是孩子。十年后发现',id:'ghost'},
+{t:'迪士尼/VIP演唱会/包场打游戏——"白来的！"',id:'bro'},
+{t:'升级家庭安防。研究孩子未来城市治安',id:'surveillance'},
+{t:'"存一半，剩下的你自己看着办——锻炼理财"',id:'zen'},
+{t:'全买成有机食品保健品——够吃到世界末日',id:'wellness'},
+{t:'立刻买那辆看了十年的摩托车——剩下的你们分',id:'midlife'}]},
+{qa:'他最让你/孩子骄傲的是什么？',qb:'你最让孩子骄傲的是什么？',opts:[
+{t:'别人提你爸都说"了不起"——虽然你也不确定具体指什么',id:'benchmark'},
+{t:'你的每一张童年照片都被拍得像杂志封面',id:'social'},
+{t:'你需要他的那一瞬间——他总是出现的',id:'ghost'},
+{t:'他给你做的规划——回头看每一步都踩对了',id:'startup'},
+{t:'有一种"天塌下来有他"的安全感',id:'surveillance'},
+{t:'不声不响但家里从来没缺过任何东西',id:'atm'},
+{t:'他能解决任何问题——靠一通电话找到对的人',id:'socialite'},
+{t:'他从不对你人生指手画脚——但你的决定他都支持',id:'zen'}]},
+{qa:'"爸爸"这个职位的核心灵魂是？',qb:'你在"爸爸"岗位上的灵魂是？',opts:[
+{t:'永远的参照系——虽然烦但没他还真不行',id:'benchmark'},
+{t:'既是制片人又是主演——家庭真人秀MVP',id:'social'},
+{t:'最强辅助——让主力输出（你妈）发挥最大',id:'askmom'},
+{t:'隐形守护者——后台一直在运行',id:'ghost'},
+{t:'陪玩一号位——只要他还在玩，你就还没长大',id:'bro'},
+{t:'安全协议最底层——所有保护机制最终兜底',id:'surveillance'},
+{t:'时间魔术师——最少时间制造最大存在感',id:'workaholic'},
+{t:'创意引擎——永不枯竭的发明（效果未知）',id:'diy'}]}
+];
+var AS={track:null,answers:[],idx:0,result:null,posterUrl:null};
+window.Q={
+to:function(n){var s=document.querySelectorAll('.screen');for(var i=0;i<s.length;i++)s[i].classList.remove('active');var e=document.getElementById('sc-'+n);if(e)e.classList.add('active')},
+pickTrack:function(t,el){AS.track=t;var c=document.querySelectorAll('.track-card');for(var i=0;i<c.length;i++)c[i].classList.remove('selected');if(el)el.classList.add('selected');this.ensureInput();var that=this;setTimeout(function(){that.to('input')},350)},
+ensureInput:function(){if(!document.getElementById('sc-input')){var d=document.createElement('div');d.className='screen';d.id='sc-input';d.innerHTML='<h2 style="font-size:1.2rem;font-weight:800;margin-bottom:0.3rem">准备好了吗？</h2><p style="font-size:0.78rem;color:var(--text2);margin-bottom:1rem">8道场景题 · 测测你的爸爸图鉴</p><button class="btn" onclick="Q.startQuiz()" style="font-size:1rem;padding:0.85rem 2.5rem">开始测试</button><p style="font-size:0.65rem;color:var(--text3);margin-top:0.5rem">约 1 分钟</p>';document.getElementById('app').appendChild(d)}},
+startQuiz:function(){AS.answers=[];AS.idx=0;this.to('quiz');this.renderQ()},
+renderQ:function(){var q=QUESTIONS[AS.idx];var cur=AS.answers[AS.idx];var opts=q.opts.concat([{t:'都不是，我自己写……',id:'custom'}]);var h='';for(var i=0;i<opts.length;i++){var o=opts[i];var sel=cur===i?' sel':'';var cls=o.id==='custom'?'opt custom':'opt';h+='<div class="'+cls+sel+'" onclick="Q.pick('+i+',this)">'+o.t+'</div>'}h+='<div class="custom-wrap'+(cur&&cur.custom?' show':'')+'" id="custom-wrap"><textarea class="custom-input" id="custom-text" rows="2" placeholder="写下你的真实情况…" oninput="Q.onCustomInput()">'+(cur&&cur.custom?cur.custom:'')+'</textarea></div>';document.getElementById('qz-opts').innerHTML=h;document.getElementById('z-q').textContent=AS.track==='b'?q.qb:q.qa;document.getElementById('z-cnt').textContent=(AS.idx+1)+' / 8';var dots='';for(var j=0;j<8;j++){dots+='<div class="quiz-dot'+(j<=AS.idx&&AS.answers[j]!==undefined?' done':'')+'"></div>'}document.getElementById('z-dots').innerHTML=dots;document.getElementById('z-prev').style.display=AS.idx>0?'inline-flex':'none';document.getElementById('z-next').style.display='none';document.getElementById('z-next').textContent=AS.idx>=7?'查看结果':'下一步';setTimeout(function(){if(cur&&cur.custom){var ta=document.getElementById('custom-text');if(ta)ta.focus()}},50)},
+pick:function(i,el){var ops=document.querySelectorAll('#qz-opts .opt');for(var k=0;k<ops.length;k++)ops[k].classList.remove('sel');if(el)el.classList.add('sel');var q=QUESTIONS[AS.idx];var opts=q.opts.concat([{id:'custom'}]);var o=opts[i];if(o&&o.id==='custom'){AS.answers[AS.idx]={custom:''};document.getElementById('custom-wrap').classList.add('show');document.getElementById('z-next').style.display='inline-flex';setTimeout(function(){var ta=document.getElementById('custom-text');if(ta)ta.focus()},50)}else{AS.answers[AS.idx]=i;document.getElementById('custom-wrap').classList.remove('show');document.getElementById('z-next').style.display='inline-flex'}},
+onCustomInput:function(){var a=AS.answers[AS.idx];if(a&&a.custom!==undefined)a.custom=document.getElementById('custom-text').value},
+next:function(){var a=AS.answers[AS.idx];if(a===undefined)return;if(AS.idx>=7){if(AS.answers.length<8){var ok=true;for(var v=0;v<8;v++){if(AS.answers[v]===undefined)ok=false}if(!ok)return}this.finish();return}AS.idx++;this.renderQ()},
+prev:function(){AS.idx--;this.renderQ()},
+finish:function(){var scores={};for(var t=0;t<TYPES.length;t++)scores[TYPES[t].id]=0;for(var i=0;i<8;i++){var a=AS.answers[i];if(!a)continue;if(a.custom!==undefined){var idx=Math.floor(Math.random()*TYPES.length);scores[TYPES[idx].id]+=0.5}else{var q=QUESTIONS[i];var o=q.opts[a];if(o&&scores[o.id]!==undefined)scores[o.id]++}}var mainId=Object.keys(scores).reduce(function(a,b){return scores[a]>scores[b]?a:b});AS.result=TYPES.find(function(t){return t.id===mainId});AS.result.message=AS.result.msgs[Math.floor(Math.random()*AS.result.msgs.length)];this.showResult()},
+showResult:function(){var d=AS.result;document.getElementById('res-emoji').textContent=d.emoji;document.getElementById('res-name').textContent=d.name;document.getElementById('res-name').style.color=d.color;document.getElementById('res-tag').textContent=d.tag;document.getElementById('res-desc').textContent=d.desc;document.getElementById('res-msg').textContent=d.message;document.getElementById('res-auth').textContent=d.auth;document.getElementById('res-auth').style.color=d.color;var bars='';for(var i=0;i<d.dims.length;i++){bars+='<div class="bar-row"><span class="bar-label">'+d.dims[i].l+'</span><div class="bar-wrap"><div class="bar-fill" style="width:0;background:'+d.color+'"></div></div><span class="bar-val">'+d.dims[i].v+'</span></div>'}document.getElementById('res-bars').innerHTML=bars;var that=this;requestAnimationFrame(function(){setTimeout(function(){var fills=document.querySelectorAll('.bar-fill');for(var i=0;i<fills.length;i++)fills[i].style.width=d.dims[i].v+'%'},300)});this.to('result')},
+genPoster:function(){var d=AS.result;if(!d)return;var W=750,H=950,M=35;var cv=document.createElement('canvas');cv.width=W;cv.height=H;var cx=cv.getContext('2d');var F='PingFang SC, Microsoft YaHei, sans-serif';var bg=cx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#060612');bg.addColorStop(0.3,'#0c0c24');bg.addColorStop(1,'#08081a');cx.fillStyle=bg;cx.fillRect(0,0,W,H);
+// Decorative frame
+cx.strokeStyle=d.color+'40';cx.lineWidth=4;cx.strokeRect(M,M,W-M*2,H-M*2);
+cx.strokeStyle=d.color+'15';cx.lineWidth=2;cx.strokeRect(M+8,M+8,W-(M+8)*2,H-(M+8)*2);
+// Color glow
+var glow=cx.createRadialGradient(W/2,80,20,W/2,350,650);
+glow.addColorStop(0,d.color+'25');glow.addColorStop(1,'transparent');
+cx.fillStyle=glow;cx.fillRect(0,0,W,H);
+// Stars
+for(var i=0;i<100;i++){var sx=Math.random()*W,sy=Math.random()*H*0.5,ss=Math.random()*1.5+0.3;cx.fillStyle='rgba(255,255,255,'+(Math.random()*0.5+0.1)+')';cx.beginPath();cx.arc(sx,sy,ss,0,Math.PI*2);cx.fill()}
+// Title gradient
+cx.textAlign='center';cx.font='900 46px '+F;
+var tg=cx.createLinearGradient(W/2-180,0,W/2+180,0);
+tg.addColorStop(0,d.color);tg.addColorStop(0.5,d.color2);tg.addColorStop(1,d.color);
+cx.fillStyle=tg;cx.fillText('DAD Pokédex',W/2,68);
+cx.font='900 38px '+F;cx.fillStyle=tg;cx.fillText('爸爸图鉴',W/2,110);
+// Divider line
+cx.fillStyle=d.color+'60';cx.fillRect(W/2-80,130,160,2);
+// Emoji circle
+var ecY=185;cx.fillStyle=d.color+'15';cx.beginPath();cx.arc(W/2,ecY,52,0,Math.PI*2);cx.fill();
+cx.strokeStyle=d.color+'40';cx.lineWidth=2;cx.beginPath();cx.arc(W/2,ecY,52,0,Math.PI*2);cx.stroke();
+cx.font='64px serif';cx.fillText(d.emoji,W/2,ecY+22);
+// Name
+cx.font='900 40px '+F;cx.fillStyle=d.color;cx.fillText(d.name,W/2,270);
+// Tagline
+cx.font='500 16px '+F;cx.fillStyle='#c0b8a8';
+var tl=[],tline='';for(var ti=0;ti<d.tag.length;ti++){var ttl=tline+d.tag[ti];if(cx.measureText(ttl).width>620&&tline){tl.push(tline);tline=d.tag[ti]}else{tline=ttl}}if(tline)tl.push(tline);tl=tl.slice(0,2);for(var li=0;li<tl.length;li++){cx.fillText(tl[li],W/2,300+li*22)}
+// Dimensions with rounded cards
+var byCard=340;cx.fillStyle='rgba(255,255,255,0.03)';cx.beginPath();cx.roundRect(M,byCard-10,W-M*2,4*36+30,16);cx.fill();
+for(var di=0;di<d.dims.length;di++){var dim=d.dims[di],y=byCard+di*36;cx.textAlign='right';cx.font='700 14px '+F;cx.fillStyle='#aaa';cx.fillText(dim.l,120,y+14);cx.fillStyle='rgba(255,255,255,0.06)';cx.beginPath();cx.roundRect(130,y,480,18,9);cx.fill();var fw=480*dim.v/100;var fg=cx.createLinearGradient(130,0,130+480,0);fg.addColorStop(0,d.color);fg.addColorStop(1,d.color2);cx.fillStyle=fg;cx.beginPath();cx.roundRect(130,y,fw,18,9);cx.fill();cx.textAlign='left';cx.font='900 13px '+F;cx.fillStyle='#fff';cx.fillText(dim.v,620,y+14)}
+// Message section
+var my=byCard+d.dims.length*36+40;cx.font='700 17px '+F;cx.fillStyle=d.color;cx.textAlign='center';cx.fillText('— 爸爸鉴定报告 —',W/2,my);
+cx.font='600 22px '+F;cx.fillStyle='#e8e4dc';
+var ml=[],mline='';for(var ji=0;ji<d.message.length;ji++){var mt=mline+d.message[ji];if(cx.measureText(mt).width>620&&mline){ml.push(mline);mline=d.message[ji]}else{mline=mt}}if(mline)ml.push(mline);ml=ml.slice(0,3);for(var lj=0;lj<ml.length;lj++){cx.fillText(ml[lj],W/2,my+35+lj*30)}
+// Author
+if(d.auth){cx.font='600 18px '+F;cx.fillStyle=d.color;cx.textAlign='center';cx.fillText(d.auth,W/2,my+35+ml.length*30+28)}
+// QR code area at bottom
+var qrSize=80,qrY=H-135;
+cx.fillStyle='rgba(255,255,255,0.03)';cx.beginPath();cx.roundRect(W/2-60,qrY-25,120,130,12);cx.fill();
+cx.font='700 15px '+F;cx.fillStyle=d.color;cx.textAlign='center';cx.fillText('扫码参与测试',W/2,qrY-5);
+// Draw pre-loaded QR image
+if(AS.qrImg&&AS.qrImg.complete){cx.drawImage(AS.qrImg,W/2-qrSize/2,qrY,qrSize,qrSize)}
+else{cx.fillStyle='#333';cx.fillRect(W/2-qrSize/2,qrY,qrSize,qrSize);cx.fillStyle='#555';cx.font='11px '+F;cx.textAlign='center';cx.fillText('扫码测爸爸图鉴',W/2,qrY+qrSize/2+4)}
+// Save and show with QR
+var that=this;function finalizePoster(){AS.posterUrl=cv.toDataURL('image/png');document.getElementById('poster-img').src=AS.posterUrl;document.getElementById('poster-modal').style.display='flex'}
+if(!AS.qrImg||!AS.qrImg.complete){AS.qrImg=new Image();AS.qrImg.crossOrigin='anonymous';
+  var url='https://api.qrserver.com/v1/create-qr-code/?size=160x160&data='+encodeURIComponent(window.location.href||'http://localhost:8083');
+  AS.qrImg.onload=function(){finalizePoster()};AS.qrImg.onerror=function(){finalizePoster()};AS.qrImg.src=url}
+else{finalizePoster()}},
+dlPoster:function(){var a=document.createElement('a');a.href=AS.posterUrl;a.download='dad-pokedex-'+Date.now()+'.png';a.click()},
+restart:function(){AS.answers=[];AS.idx=0;AS.result=null;this.to('start')}
+};
+Q.ensureInput();
+
+</script>
+</body>
+</html>
