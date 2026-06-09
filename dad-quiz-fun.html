@@ -218,7 +218,7 @@ else{cx.fillStyle='#333';cx.fillRect(W/2-qrSize/2,qrY,qrSize,qrSize);cx.fillStyl
 // Save and show with QR
 var that=this;function finalizePoster(){AS.posterUrl=cv.toDataURL('image/png');document.getElementById('poster-img').src=AS.posterUrl;document.getElementById('poster-modal').style.display='flex'}
 if(!AS.qrImg||!AS.qrImg.complete){AS.qrImg=new Image();AS.qrImg.crossOrigin='anonymous';
-  var url='https://api.qrserver.com/v1/create-qr-code/?size=160x160&data='+encodeURIComponent(window.location.href||'http://localhost:8083');
+  var url="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgAQMAAACxAfVuAAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABm0lEQVRIibWWMY7EIAxFTUXJEbgJuVa6XI3chCNQpsL7P2ZXs9J0wWg0Im8ieTDf3xb5ti5VrQkbvTWOHPE43sJTJOJRuZ5DYxUpPpCbpHefvOGFxw/e5NjjgL6wylPSw/O2PZD7/gSVkvH5yOdmSDEAloTQT/lQyG641tF5wND+CXorRHREtHxqzc88qQeMg7cm89b0ZnRK4h08JVFgg1eDkpGpDQ9IyUlSaCCwZqI2ys8BXtMB+FNoOjK4OEFcUIDP9HU1wm8PiDTq5MxnoeSslN5AnuWYgW7UTtMqK5+7Id2GR0j2KEejQhxg1A6lsV4YGvWS8Y4HvCrk3bGhDJBVmQX7Eg6mDl0yEjY1JTvAswg7l+UNtmz5dIDXSLgg68Ls+5Y6B8jod0cmqW1ED7r+0nYoZmiozWw+wHy+hOhZA809mcBwR+ybDpCLYkM3kWjC84HWi3W6Fps+rKC6wHP5GDpaprmF36lyO1wzmFnNnPf2QHqLdWGU57JKJximYdJqshecszdHI6VhMoE+8G/Y0znsMZ/VBX5bP+1Y3UaaROEzAAAAAElFTkSuQmCC";
   AS.qrImg.onload=function(){finalizePoster()};AS.qrImg.onerror=function(){finalizePoster()};AS.qrImg.src=url}
 else{finalizePoster()}},
 dlPoster:function(){var a=document.createElement('a');a.href=AS.posterUrl;a.download='dad-pokedex-'+Date.now()+'.png';a.click()},
