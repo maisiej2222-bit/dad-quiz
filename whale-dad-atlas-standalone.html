@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鲸爸图鉴｜Super Dad Profile</title>
+  <style>
+    :root {
+      --bg: #0c0c1d;
+      --text: #f8f6f2;
+      --text2: #a8a5a0;
+      --text3: #6b6860;
+      --surface: rgba(255,255,255,0.05);
+      --radius: 16px;
+      --font: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:var(--bg);font-family:var(--font);color:var(--text);min-height:100vh;overflow-x:hidden}
+    #app{min-height:100vh;position:relative}
+    .screen{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem}
+    .screen.active{display:flex}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;
+      padding:0.9rem 3rem;font-size:1.1rem;font-weight:800;
+      border:none;border-radius:999px;cursor:pointer;font-family:var(--font);
+      background:linear-gradient(135deg,#6366f1,#a855f7,#ec4899);color:#fff;
+      box-shadow:0 8px 40px rgba(139,92,246,0.35);
+      transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.25s;
+      letter-spacing:0.04em;
+    }
+    .btn:hover{transform:translateY(-4px) scale(1.04);box-shadow:0 16px 48px rgba(139,92,246,0.5)}
+    .btn-outline{
+      display:inline-flex;align-items:center;justify-content:center;gap:0.4rem;
+      padding:0.7rem 2rem;font-size:0.9rem;font-weight:700;
+      border:2px solid rgba(255,255,255,0.2);border-radius:999px;cursor:pointer;
+      background:rgba(255,255,255,0.04);color:var(--text);font-family:var(--font);
+      transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .btn-outline:hover{border-color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.08);transform:translateY(-3px)}
+    
+    .lang-btn{
+      padding:0.5rem 1.5rem;font-size:0.85rem;font-weight:700;
+      border:2px solid rgba(255,255,255,0.15);border-radius:999px;cursor:pointer;
+      background:rgba(255,255,255,0.03);color:var(--text2);font-family:var(--font);
+      transition:all 0.25s;
+    }
+    .lang-btn:hover{border-color:rgba(99,102,241,0.5);color:var(--text);}
+    .lang-btn.active{
+      background:linear-gradient(135deg,#6366f1,#a855f7);
+      border-color:#6366f1;color:#fff;
+    }
+
+    .track-cards{display:flex;gap:1.2rem;flex-wrap:wrap;justify-content:center;width:100%;max-width:640px}
+    .track-card{
+      flex:1;min-width:250px;max-width:300px;
+      background:var(--surface);backdrop-filter:blur(12px);
+      border:2px solid rgba(255,255,255,0.1);border-radius:var(--radius);
+      padding:2.2rem 1.5rem;cursor:pointer;text-align:center;
+      transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .track-card:hover{transform:translateY(-8px);border-color:rgba(99,102,241,0.4)}
+    .track-card.selected{border-color:#6366f1;box-shadow:0 0 40px rgba(99,102,241,0.3)}
+    .track-title{font-size:1.4rem;font-weight:800;margin-bottom:0.6rem;letter-spacing:0.04em}
+    .track-desc{font-size:0.85rem;color:var(--text2);line-height:1.6}
+    
+    .quiz-progress{display:flex;gap:0.4rem;margin-bottom:1.2rem}
+    .quiz-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all 0.3s}
+    .quiz-dot.done{background:#6366f1}
+    .quiz-num{font-size:0.75rem;color:var(--text3);font-weight:700;letter-spacing:0.1em;margin-bottom:1rem}
+    .quiz-q{font-size:1.3rem;font-weight:700;line-height:1.6;text-align:center;max-width:400px;margin-bottom:1.5rem}
+    .quiz-q-text{background:linear-gradient(135deg,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    
+    #qz-opts{display:flex;flex-direction:column;gap:0.6rem;width:100%;max-width:420px}
+    .opt{
+      display:flex;align-items:flex-start;gap:0.8rem;
+      padding:1rem 1.2rem;border-radius:var(--radius);
+      background:var(--surface);border:2px solid rgba(255,255,255,0.1);
+      cursor:pointer;transition:all 0.3s;
+    }
+    .opt:hover{border-color:rgba(99,102,241,0.4);background:rgba(255,255,255,0.06)}
+    .opt.sel{border-color:#6366f1;background:rgba(99,102,241,0.15)}
+    .opt-txt{font-size:0.75rem;color:var(--text);line-height:1.5;padding-top:0.15rem}
+    
+    .result-card{
+      background:var(--surface);backdrop-filter:blur(12px);
+      border:2px solid rgba(255,255,255,0.1);border-radius:var(--radius);
+      padding:2rem 1.8rem;text-align:center;max-width:420px;
+    }
+    .result-name{font-size:1.8rem;font-weight:900;margin-bottom:0.3rem;letter-spacing:0.04em}
+    .result-tag{font-size:0.9rem;color:var(--text2);margin-bottom:0.8rem}
+    .result-desc{font-size:0.85rem;color:var(--text2);line-height:1.6;margin-bottom:1.2rem}
+    
+    .star-row{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem}
+    .star-label{font-size:0.8rem;color:var(--text3);min-width:50px;text-align:right}
+    .star-bar-wrap{flex:1;height:12px;background:rgba(255,255,255,0.1);border-radius:6px;overflow:hidden}
+    .star-bar-fill{height:100%;border-radius:6px;transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1)}
+    .star-bar-val{font-size:0.75rem;color:var(--text2);font-weight:700;width:30px;text-align:right}
+    
+    .msg-box{background:rgba(99,102,241,0.1);border-radius:var(--radius);padding:1.2rem;margin:1rem 0}
+    .msg-label{font-size:0.75rem;color:#a78bfa;font-weight:700;letter-spacing:0.05em;margin-bottom:0.5rem}
+    .msg-text{font-size:1rem;color:var(--text);line-height:1.6;font-style:italic}
+    
+    .sub-id{font-size:0.8rem;color:#f59e0b;font-weight:700;margin:0.8rem 0;display:none}
+    
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:100;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .modal-overlay.active{display:flex;align-items:flex-start;justify-content:center;padding:1rem}
+    .modal-content{background:var(--surface);border-radius:var(--radius);padding:1.5rem;max-width:440px;width:100%;text-align:center;margin:1rem 0}
+    #poster-img{width:100%;border-radius:12px;margin:0.8rem 0;max-height:85vh;object-fit:contain}
+    
+    .wave-bg{position:absolute;bottom:0;left:0;right:0;height:200px;overflow:hidden;z-index:0;opacity:0.3}
+    .wave{position:absolute;bottom:0;width:200%;height:100%;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C66.12,105.76,136.09,76.5,198.31,61.41,266.56,44.72,280.69,63.93,321.39,56.44Z' fill='%236366f1' opacity='0.4'%3E%3C/path%3E%3C/svg%3E") repeat-x;animation:wave 10s linear infinite}
+    .wave:nth-child(2){animation-delay:-2s}
+    .wave:nth-child(3){animation-delay:-4s}
+    .wave:nth-child(4){animation-delay:-6s}
+    .wave:nth-child(5){animation-delay:-8s}
+    @keyframes wave{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="wave-bg">
+      <div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div>
+    </div>
+
+    <!-- START SCREEN -->
+    <div class="screen active" id="sc-start">
+      <div style="text-align:center;position:relative;z-index:5">
+        <h1 id="start-title" style="font-size:3rem;font-weight:900;margin-bottom:0.35rem;letter-spacing:0.08em;background:linear-gradient(135deg,#6366f1 0%,#a855f7 30%,#ec4899 60%,#f59e0b 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.3">
+          鲸爸图鉴
+        </h1>
+        <p id="start-subtitle" style="font-size:1.1rem;font-weight:800;margin-bottom:0.3rem;color:var(--text);letter-spacing:0.04em;opacity:0.9">Super Dad Profile</p>
+        <div style="width:60px;height:3px;background:linear-gradient(90deg,#6366f1,#ec4899);margin:0.8rem auto;border-radius:2px"></div>
+        <p id="start-desc" style="font-size:0.92rem;color:var(--text2);margin-bottom:2.5rem;max-width:320px;line-height:1.8;font-weight:600;text-align:center;margin-left:auto;margin-right:auto">
+          每个爸爸都有自己独特的<span style="background:linear-gradient(135deg,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900">性格底色</span>
+        </p>
+        <button class="btn" onclick="App.go('track')" id="start-btn" style="font-size:1.2rem;padding:1.1rem 4rem;letter-spacing:0.06em">
+          开始探索
+        </button>
+        <p id="start-hint" style="font-size:0.72rem;color:var(--text3);margin-top:1.2rem;font-weight:700;letter-spacing:0.05em">8 道场景题 · 发现你的鲸爸属性</p>
+        
+        <div style="display:flex;gap:0.5rem;justify-content:center;margin-top:2.5rem">
+          <button id="lang-zh" class="lang-btn active" onclick="App.setLang('zh')">中文</button>
+          <button id="lang-en" class="lang-btn" onclick="App.setLang('en')">English</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRACK SCREEN -->
+    <div class="screen" id="sc-track">
+      <h2 id="track-title" style="font-size:1.35rem;font-weight:800;margin-bottom:1.5rem;text-align:center;letter-spacing:0.05em">选择你的探索视角</h2>
+      <div class="track-cards">
+        <div class="track-card" id="track-a" onclick="App.pickTrack('a',this)">
+          <div id="track-a-title" class="track-title" style="color:#a78bfa">我家那位超级爸爸</div>
+          <div id="track-a-desc" class="track-desc">为父亲创建鲸爸图鉴<br>感恩 · 回忆 · 成长</div>
+        </div>
+        <div class="track-card" id="track-b" onclick="App.pickTrack('b',this)">
+          <div id="track-b-title" class="track-title" style="color:#f472b6">我就是那位超级爸爸</div>
+          <div id="track-b-desc" class="track-desc">为自己创建鲸爸图鉴<br>责任 · 守护 · 传承</div>
+        </div>
+      </div>
+      <p id="track-desc" style="font-size:0.76rem;color:var(--text3);margin-top:1.8rem;text-align:center;max-width:380px;line-height:1.6;font-weight:600">
+        有人正在想念自己的父亲，有人正在成为孩子眼中的父亲。
+      </p>
+    </div>
+
+    <!-- INPUT SCREEN -->
+    <div class="screen" id="sc-input">
+      <h2 id="ready-title" style="font-size:1.35rem;font-weight:800;margin-bottom:0.2rem;text-align:center;letter-spacing:0.05em">准备好了吗？</h2>
+      <p id="ready-desc" style="font-size:0.84rem;color:var(--text2);margin-bottom:1rem;text-align:center;font-weight:600;line-height:1.5">8道场景题，发现你的鲸爸属性</p>
+      <button id="ready-btn" class="btn" onclick="App.startQuiz()" style="font-size:1.1rem;padding:1rem 3rem">开始答题</button>
+      <p style="font-size:0.7rem;color:var(--text3);margin-top:0.6rem;font-weight:700">约 2 分钟</p>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div class="screen" id="sc-quiz">
+      <div class="quiz-progress" id="qz-dots"></div>
+      <div class="quiz-num" id="qz-num">1 / 8</div>
+      <div class="quiz-q"><div class="quiz-q-text" id="qz-q"></div></div>
+      <div id="qz-opts"></div>
+      <div style="display:flex;gap:0.5rem;margin-top:0.8rem">
+        <button class="btn-outline" id="qz-prev" onclick="App.quizPrev()" style="display:none">← 上一题</button>
+        <button class="btn" id="qz-next" onclick="App.handleNext()" style="display:none">下一题 →</button>
+      </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div class="screen" id="sc-result">
+      <div class="result-wrap">
+        <div class="result-card" id="result-card">
+          <h2 class="result-name" id="res-name" style="color:var(--accent1)"></h2>
+          <p class="result-tag" id="res-tag"></p>
+          <p class="result-desc" id="res-desc"></p>
+          <div id="res-bars" style="margin-bottom:0.75rem"></div>
+          <div class="sub-id" id="res-sub"></div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.4rem;justify-content:center;margin-top:0.6rem">
+            <button id="gen-poster-btn" class="btn" onclick="App.genPoster()" style="font-size:0.8rem;padding:0.55rem 1.2rem">生成海报</button>
+            <button id="restart-btn" class="btn-outline" onclick="App.restart()">重新测试</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POSTER MODAL -->
+    <div class="modal-overlay" id="poster-modal">
+      <div class="modal-content">
+        <h3 id="poster-title" style="font-weight:800;margin-bottom:0.5rem;letter-spacing:0.04em">你的鲸爸图鉴海报</h3>
+        <img id="poster-img" alt="鲸爸图鉴海报">
+        <p id="poster-hint" style="font-size:0.74rem;color:var(--text2);margin:0.4rem 0;font-weight:600">长按保存 · 或点击下载</p>
+        <div style="display:flex;gap:0.4rem;justify-content:center;flex-wrap:wrap">
+          <button id="download-btn" class="btn" onclick="App.dlPoster()" style="font-size:0.78rem;padding:0.5rem 1rem">下载</button>
+          <button id="close-btn" class="btn-outline" onclick="App.closeModal()">关闭</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const IDENTITIES = [
+            {id:'captain', name:'灯塔导航员', nameEn:'The Guiding Light', role:'The Guiding Light', color1:'#16a34a', color2:'#4ade80', tagline:'无论风浪多大，总有人负责找到方向', taglineEn:'Through every storm, he charts the course home.', desc:'你是家庭的定海神针。责任感是你最深的底色。不需要豪言壮语，你的存在本身就是全家的安全感来源。', descEn:'You are the family\'s anchor. Your steady presence is what lets everyone sleep soundly at night — no grand speeches, no fanfare, just quiet strength they can always count on.', dims:[{label:"责任感",labelEn:"Steadfastness",v:95},{label:"担当力",labelEn:"Accountability",v:92},{label:"稳定感",labelEn:"Stability",v:90},{label:"温暖度",labelEn:"Warmth",v:72}], messages:["爱不需要完美，只需要在场。—xx中心，0027xx，陈xx","父爱无需言语，行动最有力。—xx中心，0027xx，陈xx","以身作则，让孩子看到榜样的力量。—xx中心，0027xx，陈xx"], messagesEn:["Love doesn\'t need to be perfect, just present.—xx Center, 0027xx, Chen xx","A father\'s love speaks through action, not words.—xx Center, 0027xx, Chen xx","He doesn\'t just show the way, he is the way.—xx Center, 0027xx, Chen xx"]},
+      {id:'architect', name:'成长架构师', nameEn:'The Mentor', role:'The Mentor', color1:'#f59e0b', color2:'#fbbf24', tagline:'他搭建的不只是系统，还有孩子成长的世界', taglineEn:'He doesn\'t just build systems — he builds character.', desc:'你相信成长需要结构和方法。你不会直接给孩子答案，而是陪他一起搭建理解世界的框架。', descEn:'You believe growth takes patience and guidance. You never hand over the answer — you walk alongside, helping your child build the scaffolding to reach it on their own.', dims:[{label:"引导力",labelEn:"Guidance",v:88},{label:"耐心度",labelEn:"Patience",v:91},{label:"智慧值",labelEn:"Wisdom",v:86},{label:"温暖度",labelEn:"Warmth",v:68}], messages:["陪孩子寻找答案，比直接给答案更重要。—周xx","教孩子独立，但别忘了陪伴。—周xx","每一次失败，都是成长的机会。—周xx"], messagesEn:["Guiding them to the answer matters more than giving it.—Zhou XX","Teach independence — but never stop walking beside them.—Zhou XX","Every stumble is a chance to grow stronger.—Zhou XX"]},
+      {id:'operator', name:'快乐运营官', nameEn:'The Joymaker', role:'The Joymaker', color1:'#ec4899', color2:'#f472b6', tagline:'家里的快乐，也需要持续运营', taglineEn:'He turns ordinary moments into family magic.', desc:'你坚信笑声是家庭最好的背景音。你擅长把平淡的日子变成节日，把紧张的时刻化为轻松的回忆。', descEn:'You know that laughter is the heartbeat of a happy home. A rainy Tuesday? You turn it into a festival. A tense moment? You dissolve it with a wink and a joke. Joy follows wherever you go.', dims:[{label:"快乐值",labelEn:"Joy",v:86},{label:"感染力",labelEn:"Spirit",v:93},{label:"创意度",labelEn:"Creativity",v:88},{label:"温暖度",labelEn:"Warmth",v:82}], messages:["快乐是可以传染的，把它带回家。—周xx","即使累，也不要错过孩子的笑容。—周xx","用故事和游戏连接彼此。—周xx"], messagesEn:["Joy is contagious — bring it home every single day.—Zhou XX","No matter how tired you are, never miss a chance to make them smile.—Zhou XX","Connect through stories, laughter, and the silly moments.—Zhou XX"]},
+      {id:'responder', name:'情绪响应官', nameEn:'The Heart Listener', role:'The Heart Listener', color1:'#06b6d4', color2:'#22d3ee', tagline:'总能第一时间响应家人的情绪需求', taglineEn:'He hears what the heart says before the words come out.', desc:'你拥有一种近乎直觉的共情能力。家人情绪最细微的变化，你总是第一个察觉。', descEn:'You have a gift: you sense the shift in the room before anyone speaks. A furrowed brow, a quiet sigh — you catch them all. Your family never has to explain; they just feel understood.', dims:[{label:"共情力",labelEn:"Empathy",v:94},{label:"倾听值",labelEn:"Listening",v:92},{label:"细腻度",labelEn:"Attunement",v:85},{label:"温暖度",labelEn:"Warmth",v:90}], messages:["倾听比说教更重要。—周xx","尊重孩子，也尊重自己。—周xx","陪孩子笑，也陪孩子思考。—周xx"], messagesEn:["Listening heals more than any lecture ever could.—Zhou XX","Respect your child deeply — and don\'t forget to respect yourself too.—Zhou XX","Laugh with them. Think with them. Be fully there.—Zhou XX"]},
+      {id:'maintainer', name:'生活运维官', nameEn:'The Fixer', role:'The Fixer', color1:'#6366f1', color2:'#818cf8', tagline:'家里的问题，他总有解决方案', taglineEn:'No problem too big, no task too small — he handles them all.', desc:'你是行动派的代表。家里什么东西坏了，你是第一个冲上去的人。你的行动力让家人相信：遇到问题，总有人能解决。', descEn:'When something breaks, you are already reaching for the toolbox. But you fix more than leaky faucets — you fix bad days, broken spirits, and uncertain moments. Your family knows: if Dad is on it, everything will be okay.', dims:[{label:"行动力",labelEn:"Can-do Spirit",v:93},{label:"可靠度",labelEn:"Reliability",v:90},{label:"解决问题",labelEn:"Resourcefulness",v:88},{label:"温暖度",labelEn:"Warmth",v:68}], messages:["用行动告诉孩子，梦想值得追。—周xx","小小举动，大大陪伴。—周xx","每天都是新的机会去关心孩子。—周xx"], messagesEn:["Show them through action that dreams are worth chasing.—Zhou XX","The smallest gesture can be the biggest act of love.—Zhou XX","Every single day is a fresh chance to show you care.—Zhou XX"]},
+      {id:'explorer', name:'梦想探索员', nameEn:'The Believer', role:'The Believer', color1:'#7c3aed', color2:'#a78bfa', tagline:'他最擅长的，是支持孩子奔向未知', taglineEn:'He sees the spark before anyone else — and fans it into a flame.', desc:'你是孩子梦想的第一个投资人。当别人说"现实点"的时候，你会说"试试看"。', descEn:'You are your child\'s very first investor. When the world says "be realistic," you are the one who whispers "go for it." You don\'t just believe in their dreams — you help them take the first step.', dims:[{label:"梦想力",labelEn:"Belief",v:91},{label:"勇气值",labelEn:"Courage",v:86},{label:"支持度",labelEn:"Support",v:84},{label:"温暖度",labelEn:"Warmth",v:76}], messages:["与孩子一起探索未知，比安排一切更有意义。—周xx","给孩子自由，也给他们信心。—周xx","梦想需要耐心，也需要陪伴。—周xx"], messagesEn:["Explore the unknown together — it beats having all the answers.—Zhou XX","Give them freedom to wander, and the confidence to find their way.—Zhou XX","Dreams need patience. And they need someone who believes.—Zhou XX"]},
+      {id:'recorder', name:'时光记录官', nameEn:'Memory Keeper', role:'Memory Keeper', color1:'#e11d48', color2:'#fb7185', tagline:'最珍贵的数据，是成长留下的痕迹', taglineEn:'The most precious data is the story of their growing up.', desc:'你的手机相册是全家人的编年史。你记得每个人的生日、每个纪念日、每张照片背后的故事。', descEn:'Your phone is a family museum. Every birthday, every lost tooth, every first step — you have preserved them all. Your children will grow up knowing exactly where they came from, because you never let a single precious moment slip away.', dims:[{label:"仪式感",labelEn:"Tradition",v:90},{label:"细腻度",labelEn:"Thoughtfulness",v:87},{label:"记忆值",labelEn:"Cherishing",v:92},{label:"温暖度",labelEn:"Warmth",v:82}], messages:["用心记录生活的每一刻。—周xx","每一次陪伴都是成长的礼物。—周xx","家，是孩子最初的课堂。—周xx"], messagesEn:["The smallest moments are the ones worth treasuring most.—Zhou XX","Every moment together is a gift they will carry forever.—Zhou XX","Home is where their story begins — make it beautiful.—Zhou XX"]},
+      {id:'connector', name:'全球连接者', nameEn:'Distant Guardian', role:'Distant Guardian', color1:'#0d9488', color2:'#2dd4bf', tagline:'跨越时区，爱始终在线', taglineEn:'Time zones apart, heartbeats together.', desc:'你可能因为工作常常奔波在外，但你的爱从未缺席。距离从未稀释你的陪伴，反而让每一次相聚都格外珍贵。', descEn:'Work may carry you across oceans, but your heart never leaves home. Distance has never weakened your bond — it has made every hug, every video call, every reunion more precious than gold.', dims:[{label:"牵挂力",labelEn:"Devotion",v:89},{label:"连接感",labelEn:"Connection",v:86},{label:"守护值",labelEn:"Protection",v:80},{label:"温暖度",labelEn:"Warmth",v:84}], messages:["家，是勇气和温暖的集合体。—周xx","在陪伴中成长，在爱中前行。—周xx","家庭是最好的实验室，试着温柔以待。—周xx"], messagesEn:["Home is wherever love reaches, no matter the distance.—Zhou XX","Grow through connection. Move forward with love.—Zhou XX","Distance only matters if you let it. Your love crosses every border.—Zhou XX"]}
+    ];
+
+    const QUESTIONS_ZH = [
+      {id:'q1', textA:'孩子考试考砸了，他第一反应是？', textB:'孩子考试考砸了，你第一反应是？', options:[{t:'先安抚情绪：没关系，一次考试不代表什么，爸爸在',id:'captain'},{t:'拿出试卷一起分析：我们看看哪里可以做得更好',id:'architect'},{t:'走，吃顿好的去！吃饱了才有力气继续战斗',id:'operator'},{t:'不说话，递一杯热牛奶，安静陪在旁边',id:'responder'},{t:'找出薄弱知识点，制定一个三周改进计划',id:'maintainer'},{t:'这次发现了你的隐藏技能点——下次这个题型就是你的强项了',id:'explorer'},{t:'拍拍肩膀：等你长大回头看，这些分数根本不算什么',id:'recorder'},{t:'即使出差中也立刻打视频：跟爸爸说说，怎么回事？',id:'connector'}]},
+      {id:'q2', textA:'周末他说今天我全权安排，通常会是？', textB:'周末你说今天我全权安排，通常会是？', options:[{t:'先检查家里安全设施，然后带全家去一个万无一失的地方',id:'captain'},{t:'安排一个寓教于乐的行程：博物馆/科技馆 + 复盘讨论',id:'architect'},{t:'一场说走就走的家庭冒险：游乐园、野餐、放风筝',id:'operator'},{t:'窝在家里：一起看电影、做饭、聊天，怎么舒服怎么来',id:'responder'},{t:'带孩子一起动手做个小工程：组装家具、修理花园、DIY手工',id:'maintainer'},{t:'带孩子去体验一件他从没做过的事：攀岩、陶艺、观星',id:'explorer'},{t:'策划一个有主题的家庭日：拍照、写日记、做纪念册',id:'recorder'},{t:'和家人远程连线一起云过周末，分享各自的生活',id:'connector'}]},
+      {id:'q3', textA:'孩子说我不想学了，他怎么办？', textB:'孩子说我不想学了，你怎么办？', options:[{t:'不想学就先放一放，爸爸陪你缓一缓',id:'captain'},{t:'我们聊聊——是太难了，还是不感兴趣了？找到原因再说',id:'architect'},{t:'走，出去踢个球！脑子清空了再回来，效率翻倍',id:'operator'},{t:'最近是不是压力太大了？要不要跟爸爸说说心里话',id:'responder'},{t:'来，我们把大目标拆成小步骤，一个一个来就不难了',id:'maintainer'},{t:'也许不是不想学，是想学的方式不一样？我们换个方法试试',id:'explorer'},{t:'翻出之前的进步记录：你看，你已经走了这么远了',id:'recorder'},{t:'爸爸小时候也这样想过，后来发现...分享自己的故事',id:'connector'}]},
+      {id:'q4', textA:'如果要给他一个家庭超能力，最配的是？', textB:'如果要给你一个家庭超能力，最配的是？', options:[{t:'绝对守护力场——家人在范围内就绝对安全',id:'captain'},{t:'成长预视镜——能看到孩子未来需要的每一种能力',id:'architect'},{t:'快乐传染波——走到哪里就把笑声带到哪里',id:'operator'},{t:'情绪读心术——不用说出口就能感知家人的真实感受',id:'responder'},{t:'万能修复手——碰一下任何坏掉的东西都能复原',id:'maintainer'},{t:'梦想放大镜——看到孩子自己都还没发现的潜能',id:'explorer'},{t:'时光定格术——把每一个幸福瞬间变成永恒的珍藏',id:'recorder'},{t:'跨时空拥抱——无论多远都能给家人一个真实的拥抱',id:'connector'}]},
+      {id:'q5', textA:'家庭聚会中，他最常被看到在做什么？', textB:'家庭聚会中，你最常被看到在做什么？', options:[{t:'确保每个人都安全舒适，默默巡视全场',id:'captain'},{t:'被围着请教各种问题：从孩子教育到职业规划',id:'architect'},{t:'活跃气氛担当：讲段子、带游戏、制造笑点',id:'operator'},{t:'第一时间注意到谁不开心，走过去轻声关心',id:'responder'},{t:'在角落里修好那个坏了大半年的东西',id:'maintainer'},{t:'认真听每个人的新计划，然后说太棒了，需要什么支持？',id:'explorer'},{t:'拿着相机满场跑，不放过任何一个笑容',id:'recorder'},{t:'开着视频让远方的家人也参与进来，一个都不能少',id:'connector'}]},
+      {id:'q6', textA:'孩子长大后会怎么形容他？', textB:'你希望孩子长大后怎么形容你？', options:[{t:'有我爸在，我就觉得天塌下来也不怕',id:'captain'},{t:'每次人生迷茫的时候，都会想起我爸的引导',id:'architect'},{t:'我爸让我相信，人生最重要的能力是快乐',id:'operator'},{t:'我爸是唯一一个不需要我解释就能懂我的人',id:'responder'},{t:'什么搞不定的找我爸，他总能想到办法',id:'maintainer'},{t:'他让我相信，任何梦想都值得认真尝试',id:'explorer'},{t:'我爸比我更了解我自己——他记得我生命中的每一个重要时刻',id:'recorder'},{t:'他可能不总在身边，但他的爱从来没有缺席过',id:'connector'}]},
+      {id:'q7', textA:'他最能打动家人的方式是什么？', textB:'你最能打动家人的方式是什么？', options:[{t:'不需要言语——他在，就让人感到安心',id:'captain'},{t:'在一个关键的时刻给出了最精准的建议',id:'architect'},{t:'在最丧的一天，他成功地让全家都笑了',id:'operator'},{t:'记得每个人说过的小事，并在对的时刻提起',id:'responder'},{t:'用行动说话——默默把事情全都安排妥当了',id:'maintainer'},{t:'当所有人反对时，他是唯一一个说你可以的人',id:'explorer'},{t:'在一个普通的日子，翻出了珍藏多年的回忆',id:'recorder'},{t:'无论多忙多累，每天雷打不动的一通电话',id:'connector'}]},
+      {id:'q8', textA:'他的人生信条最接近哪一句？', textB:'你的人生信条最接近哪一句？', options:[{t:'家人平安健康，是我最大的成就',id:'captain'},{t:'最好的爱，是帮孩子成为更好的自己',id:'architect'},{t:'人生不长，每一天都值得笑着过',id:'operator'},{t:'理解，比任何事情都重要',id:'responder'},{t:'办法总比困难多，一起想办法就好',id:'maintainer'},{t:'梦想还是要有的，万一孩子替我实现了呢',id:'explorer'},{t:'每一天都值得被记住，每一个人都值得被珍惜',id:'recorder'},{t:'物理距离不重要，心的距离才重要',id:'connector'}]}
+    ];
+
+    const QUESTIONS_EN = [
+      {id:'q1', textA:'When the child fails an exam, his first reaction is?', textB:'When your child fails an exam, your first reaction is?', options:[{t:'First comfort: Its okay, one exam doesnt define you, Dad is here',id:'captain'},{t:'Take out the paper and analyze together: Lets see how we can improve',id:'architect'},{t:'Lets go eat something good! You need energy to keep going',id:'operator'},{t:'Say nothing, just hand a warm milk and sit quietly beside',id:'responder'},{t:'Identify weak points and create a 3-week improvement plan',id:'maintainer'},{t:'This time we found your hidden talent - next time this will be your strength',id:'explorer'},{t:'Pat shoulder: When you grow up, these scores wont matter',id:'recorder'},{t:'Immediately video call even on business trip: Tell Dad what happened?',id:'connector'}]},
+      {id:'q2', textA:'When he says Ill plan today, what usually happens?', textB:'When you say Ill plan today, what usually happens?', options:[{t:'First check home safety, then take family to a safe place',id:'captain'},{t:'Plan educational activities: Museum/Science Center + discussion',id:'architect'},{t:'A spontaneous family adventure: Amusement park, picnic, kite flying',id:'operator'},{t:'Stay home: Watch movies, cook, chat - whatever feels good',id:'responder'},{t:'Do a DIY project together: Assemble furniture, fix garden, crafts',id:'maintainer'},{t:'Experience something new: Rock climbing, pottery, stargazing',id:'explorer'},{t:'Plan a themed family day: Photos, journal, memory book',id:'recorder'},{t:'Virtual gathering with distant family via video call',id:'connector'}]},
+      {id:'q3', textA:'When the child says I dont want to study anymore, what does he do?', textB:'When your child says I dont want to study anymore, what do you do?', options:[{t:'Take a break if you dont want to study, Dad will be with you',id:'captain'},{t:'Lets talk - is it too hard or not interesting? Lets find out',id:'architect'},{t:'Lets go play soccer! Clear your mind first, then come back',id:'operator'},{t:'Have you been stressed lately? Want to talk to Dad?',id:'responder'},{t:'Lets break big goals into small steps, itll be easier',id:'maintainer'},{t:'Maybe its not that you dont want to learn, just need a different way',id:'explorer'},{t:'Show progress records: Look how far youve come',id:'recorder'},{t:'Dad felt the same way when I was young, and I found that...',id:'connector'}]},
+      {id:'q4', textA:'If he could have a family superpower, which fits best?', textB:'If you could have a family superpower, which fits best?', options:[{t:'Absolute protection field - family is safe within range',id:'captain'},{t:'Growth vision - see every skill child needs in future',id:'architect'},{t:'Joy contagion wave - bring laughter everywhere',id:'operator'},{t:'Emotion reading - sense feelings without words',id:'responder'},{t:'Universal repair hand - fix anything with a touch',id:'maintainer'},{t:'Dream magnifier - see potential child hasnt discovered',id:'explorer'},{t:'Time freeze - preserve every happy moment forever',id:'recorder'},{t:'Cross-space hug - hug family no matter the distance',id:'connector'}]},
+      {id:'q5', textA:'At family gatherings, what is he most often seen doing?', textB:'At family gatherings, what are you most often seen doing?', options:[{t:'Ensure everyone is safe and comfortable, quietly observe',id:'captain'},{t:'Answering various questions: From child education to career',id:'architect'},{t:'Mood maker: Tell jokes, lead games, create laughter',id:'operator'},{t:'First to notice who is upset, go over to care',id:'responder'},{t:'Fixing something broken for half a year in the corner',id:'maintainer'},{t:'Listen to everyones new plans and say Great! How can I help?',id:'explorer'},{t:'Running around with camera, capturing every smile',id:'recorder'},{t:'Video call with distant family - no one left out',id:'connector'}]},
+      {id:'q6', textA:'How will the child describe him when grown up?', textB:'How do you hope your child will describe you when grown up?', options:[{t:'With Dad around, I feel safe no matter what',id:'captain'},{t:'Whenever Im confused, I remember Dads guidance',id:'architect'},{t:'Dad taught me that the most important skill is happiness',id:'operator'},{t:'Dad is the only one who understands me without explanation',id:'responder'},{t:'Dad can always find a solution to any problem',id:'maintainer'},{t:'He makes me believe every dream is worth pursuing',id:'explorer'},{t:'Dad knows me better than myself - he remembers every important moment',id:'recorder'},{t:'He may not always be around, but his love is always there',id:'connector'}]},
+      {id:'q7', textA:'What is his most touching way to move the family?', textB:'What is your most touching way to move the family?', options:[{t:'No words needed - his presence brings peace',id:'captain'},{t:'Give precise advice at critical moments',id:'architect'},{t:'Successfully made the whole family laugh on the worst day',id:'operator'},{t:'Remember small things everyone said and mention at the right time',id:'responder'},{t:'Actions speak louder - quietly arrange everything',id:'maintainer'},{t:'When everyone opposes, he is the only one who says You can',id:'explorer'},{t:'Bring out precious memories on an ordinary day',id:'recorder'},{t:'A daily call no matter how busy or tired',id:'connector'}]},
+      {id:'q8', textA:'Which quote is closest to his life creed?', textB:'Which quote is closest to your life creed?', options:[{t:'Family health and safety is my greatest achievement',id:'captain'},{t:'The best love is helping child become better',id:'architect'},{t:'Life is short, every day deserves a smile',id:'operator'},{t:'Understanding matters more than anything',id:'responder'},{t:'Theres always a way, lets figure it out together',id:'maintainer'},{t:'Always have dreams, maybe child will fulfill mine',id:'explorer'},{t:'Every day deserves to be remembered, everyone deserves to be cherished',id:'recorder'},{t:'Distance doesnt matter, its the connection that counts',id:'connector'}]}
+    ];
+
+    const AS = {track:null,result:null,posterUrl:null};
+
+    const SM = {
+      screens:['start','track','input','quiz','result'],
+      to(name){
+        const el=document.getElementById('sc-'+name);
+        if(!el)return;
+        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+        el.classList.add('active');
+      }
+    };
+
+    const QE = {
+      answers:[],
+      idx:0,
+      get(){return this.answers[this.idx]},
+      set(v){this.answers[this.idx]=v},
+      next(){this.idx++},
+      prev(){this.idx--},
+      done(){return this.answers.length>=8 && this.answers.every(a=>a!==undefined)},
+      save(){localStorage.setItem('wd_qstate',JSON.stringify({answers:this.answers,idx:this.idx}))},
+      load(){
+        try{
+          const d=JSON.parse(localStorage.getItem('wd_qstate')||'{}');
+          this.answers=d.answers||[];
+          this.idx=d.idx||0;
+        }catch(e){}
+      }
+    };
+
+    window.App = {
+      lang: localStorage.getItem('wd_lang') || 'zh',
+
+      setLang(lang){
+        this.lang = lang;
+        localStorage.setItem('wd_lang', lang);
+        this.updateUI();
+      },
+      
+      t(key){
+        const texts = {
+          zh: { 
+            title:'鲸爸图鉴', 
+            subtitle:'Super Dad Profile', 
+            desc:'每个爸爸都有自己独特的<span style="background:linear-gradient(135deg,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900">性格底色</span>', 
+            startBtn:'开始探索', 
+            startHint:'8 道场景题 · 发现你的鲸爸属性', 
+            trackTitle:'选择你的探索视角', 
+            trackATitle:'我家那位超级爸爸', 
+            trackADesc:'为父亲创建鲸爸图鉴<br>感恩 · 回忆 · 成长', 
+            trackBTitle:'我就是那位超级爸爸', 
+            trackBDesc:'为自己创建鲸爸图鉴<br>责任 · 守护 · 传承', 
+            trackDesc:'有人正在想念自己的父亲，有人正在成为孩子眼中的父亲。',
+            readyTitle:'准备好了吗？', 
+            readyDesc:'8道场景题，发现你的鲸爸属性', 
+            readyBtn:'开始答题', 
+            prevBtn:'← 上一题', 
+            nextBtn:'下一题 →', 
+            finishBtn:'查看结果', 
+            msgLabel:'鲸爸代表寄语', 
+            genPoster:'生成海报', 
+            restart:'重新测试', 
+            posterTitle:'你的鲸爸图鉴海报', 
+            posterHint:'长按保存 · 或点击下载', 
+            download:'下载', 
+            close:'关闭', 
+            personality:'性格底色', 
+            message:'鲸爸代表寄语',
+            posterHeader:'鲸爸图鉴',
+            posterSubtitle:'Super Dad Profile'
+          },
+          en: { 
+            title:'Super Dad Profile', 
+            subtitle:'鲸爸图鉴', 
+            desc:'Every dad has his unique <span style="background:linear-gradient(135deg,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900">personality</span>', 
+            startBtn:'Start Exploring', 
+            startHint:'8 scenario questions to discover your super dad trait', 
+            trackTitle:'Choose Your Perspective', 
+            trackATitle:'My Super Dad', 
+            trackADesc:'Create profile for father<br>Gratitude · Memories · Growth', 
+            trackBTitle:'I Am Super Dad', 
+            trackBDesc:'Create profile for myself<br>Responsibility · Protection · Heritage', 
+            trackDesc:'Some are thinking of their fathers, some are becoming fathers in their children eyes.',
+            readyTitle:'Ready?', 
+            readyDesc:'8 scenario questions to discover your super dad trait', 
+            readyBtn:'Start Quiz', 
+            prevBtn:'← Previous', 
+            nextBtn:'Next →', 
+            finishBtn:'View Result', 
+            msgLabel:'Super Dad Message', 
+            genPoster:'Generate Poster', 
+            restart:'Retake Test', 
+            posterTitle:'Your Super Dad Profile Poster', 
+            posterHint:'Long press to save · or click to download', 
+            download:'Download', 
+            close:'Close', 
+            personality:'Personality Traits', 
+            message:'Super Dad Message',
+            posterHeader:'Super Dad Profile',
+            posterSubtitle:'鲸爸图鉴'
+          }
+        };
+        return texts[this.lang][key] || key;
+      },
+      
+      updateUI(){
+        document.getElementById('lang-zh').classList.toggle('active', this.lang === 'zh');
+        document.getElementById('lang-en').classList.toggle('active', this.lang === 'en');
+        
+        document.getElementById('start-title').textContent = this.t('title');
+        document.getElementById('start-subtitle').textContent = this.t('subtitle');
+        document.getElementById('start-desc').innerHTML = this.t('desc');
+        document.getElementById('start-btn').textContent = this.t('startBtn');
+        document.getElementById('start-hint').textContent = this.t('startHint');
+        
+        document.getElementById('track-title').textContent = this.t('trackTitle');
+        document.getElementById('track-a-title').textContent = this.t('trackATitle');
+        document.getElementById('track-a-desc').innerHTML = this.t('trackADesc');
+        document.getElementById('track-b-title').textContent = this.t('trackBTitle');
+        document.getElementById('track-b-desc').innerHTML = this.t('trackBDesc');
+        document.getElementById('track-desc').textContent = this.t('trackDesc');
+        
+        document.getElementById('ready-title').textContent = this.t('readyTitle');
+        document.getElementById('ready-desc').textContent = this.t('readyDesc');
+        document.getElementById('ready-btn').textContent = this.t('readyBtn');
+        
+        document.getElementById('qz-prev').textContent = this.t('prevBtn');
+
+        document.getElementById('gen-poster-btn').textContent = this.t('genPoster');
+        document.getElementById('restart-btn').textContent = this.t('restart');
+        
+        document.getElementById('poster-title').textContent = this.t('posterTitle');
+        document.getElementById('poster-hint').textContent = this.t('posterHint');
+        document.getElementById('download-btn').textContent = this.t('download');
+        document.getElementById('close-btn').textContent = this.t('close');
+      },
+
+      go(name){SM.to(name)},
+
+      pickTrack(t,el){
+        AS.track=t;
+        localStorage.setItem('wd_track',t);
+        document.querySelectorAll('.track-card').forEach(c=>c.classList.remove('selected'));
+        if(el)el.classList.add('selected');
+        setTimeout(()=>SM.to('input'),350);
+      },
+
+      startQuiz(){
+        QE.answers = [];
+        QE.idx = 0;
+        QE.save();
+        this.renderQ();
+        SM.to('quiz');
+      },
+
+      renderQ(){
+        const QUESTIONS = this.lang === 'zh' ? QUESTIONS_ZH : QUESTIONS_EN;
+        const q=QUESTIONS[QE.idx];
+        document.getElementById('qz-q').textContent=AS.track==='b'?q.textB:q.textA;
+        document.getElementById('qz-opts').innerHTML=q.options.map((o,i)=>
+          '<div class="opt'+(QE.get()===i?' sel':'')+'" data-oi="'+i+'" onclick="App.pick('+i+',this)"><span class="opt-txt">'+o.t+'</span></div>'
+        ).join('');
+        this.updNav();
+      },
+
+      pick(i,el){
+        document.querySelectorAll('#qz-opts .opt').forEach(o=>o.classList.remove('sel'));
+        if(el)el.classList.add('sel');
+        QE.set(i);
+        document.getElementById('qz-next').style.display='inline-flex';
+        QE.save();this.updNav();
+      },
+
+      updNav(){
+        const pb=document.getElementById('qz-prev'),nb=document.getElementById('qz-next');
+        pb.style.display=QE.idx>0?'inline-flex':'none';
+        nb.style.display=QE.get()!==null?'inline-flex':'none';
+        if(QE.idx>=7&&QE.get()!==null){
+          nb.textContent=this.t('finishBtn');
+        }else{
+          nb.textContent=this.t('nextBtn');
+        }
+        document.getElementById('qz-num').textContent=(QE.idx+1)+' / 8';
+        document.getElementById('qz-dots').innerHTML=Array(8).fill(0).map((_,i)=>
+          '<div class="quiz-dot'+(i<QE.idx||(i===QE.idx&&QE.get()!==null)?' done':'')+'"></div>'
+        ).join('');
+      },
+
+      quizNext(){QE.next();QE.save();this.updNav();this.renderQ()},
+      quizPrev(){QE.prev();QE.save();this.updNav();this.renderQ()},
+
+      handleNext(){
+        if(QE.get()===null)return;
+        if(QE.idx>=7){
+          const allAnswered = QE.answers.length >= 8 && QE.answers.every(a => a !== undefined && a !== null);
+          if(!allAnswered){
+            alert(this.lang === 'zh' ? '请完成所有题目后再提交！' : 'Please answer all questions before submitting!');
+            return;
+          }
+          this.finish();
+          return;
+        }
+        QE.next();QE.save();this.updNav();this.renderQ();
+      },
+
+      finish(){
+        const answers=QE.answers;
+        const scores={captain:0,architect:0,operator:0,responder:0,maintainer:0,explorer:0,recorder:0,connector:0};
+        const QUESTIONS = this.lang === 'zh' ? QUESTIONS_ZH : QUESTIONS_EN;
+        QUESTIONS.forEach((q,i)=>{
+          const opt=q.options[answers[i]];
+          if(opt)scores[opt.id]++;
+        });
+        const mainId=Object.keys(scores).reduce((a,b)=>scores[a]>scores[b]?a:b);
+        const main=IDENTITIES.find(i=>i.id===mainId);
+        const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+        const subId=sorted[1][0];
+        const sub=IDENTITIES.find(i=>i.id===subId);
+        
+        const msgs=this.lang === 'zh' ? main.messages : main.messagesEn;
+        const msg=msgs[Math.floor(Math.random()*msgs.length)];
+        
+        AS.result={
+          main,sub,counts:scores,message:msg,track:AS.track,ts:new Date().toISOString()
+        };
+        
+        this.showResult();
+      },
+
+      showResult(){
+        const d=AS.result;const id=d.main;
+        const card=document.getElementById('result-card');
+        card.style.setProperty('--accent1',id.color1);
+        card.style.setProperty('--accent2',id.color2);
+
+        document.getElementById('res-name').textContent=this.lang === 'zh' ? id.name : id.nameEn;
+        document.getElementById('res-name').style.color=id.color1;
+        document.getElementById('res-tag').textContent=this.lang === 'zh' ? id.tagline : id.taglineEn;
+        document.getElementById('res-desc').textContent=this.lang === 'zh' ? id.desc : id.descEn;
+
+        document.getElementById('res-bars').innerHTML=id.dims.map(dim=>
+          '<div class="star-row"><span class="star-label">'+(this.lang === 'zh' ? dim.label : dim.labelEn)+'</span><div class="star-bar-wrap"><div class="star-bar-fill" style="width:0%;background:'+id.color1+'"></div></div><span class="star-bar-val">'+dim.v+'</span></div>'
+        ).join('');
+
+        const subEl=document.getElementById('res-sub');
+        if(d.sub){
+          subEl.textContent=(this.lang === 'zh' ? '副属性 · '+d.sub.name : 'Secondary · '+d.sub.nameEn)+'：'+(this.lang === 'zh' ? d.sub.tagline : d.sub.taglineEn);
+          subEl.style.display='block';
+        }else{subEl.style.display='none'}
+
+        requestAnimationFrame(()=>{
+          setTimeout(()=>{
+            document.querySelectorAll('.star-bar-fill').forEach((b,i)=>{
+              b.style.width=id.dims[i].v+'%';
+            });
+          },400);
+        });
+
+        SM.to('result');
+
+        // Preload QR code for poster
+        this.preloadQR();
+      },
+
+      preloadQR(){
+        const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=4&data='
+          + encodeURIComponent(window.location.href);
+        const qr = new Image();
+        qr.crossOrigin = 'anonymous';
+        qr.onload = ()=>{ App.qrImg = qr; };
+        qr.onerror = ()=>{ App.qrImg = null; };
+        qr.src = qrUrl;
+      },
+
+      genPoster(){
+  const d = AS.result;
+  if(!d) return;
+
+  const id = d.main;
+  // Height adaptive to content: bars + QR card + CTA text
+  const qrSizeConst = 145;
+  const W = 750, M = 50;
+  const barsBottom = 420 + 44 + id.dims.length * 36;
+  const H = Math.max(1050, barsBottom + 60 + qrSizeConst + 50 + 36 + 38 + 60);
+
+  const cv = document.createElement('canvas');
+  cv.width = W;
+  cv.height = H;
+  const cx = cv.getContext('2d');
+
+  const FTitle = 'Fredoka, Nunito, PingFang SC, Microsoft YaHei, sans-serif';
+  const FBody  = 'Nunito, PingFang SC, Microsoft YaHei, Arial, sans-serif';
+  const FLabel = 'Quicksand, Nunito, PingFang SC, Microsoft YaHei, sans-serif';
+
+  const palette = {
+    bgTop:'#FBF6EE',bgMid:'#F7F0E5',bgBottom:'#EFE4D3',
+    paperDot:'#CDBDA5',textSoft:'#76695E',textMute:'#978879',
+    orange1:'#E59A58',line:'#DED3C1',lineSoft:'#ECE4D8'
+  };
+
+  const roundRect = (ctx, x, y, w, h, r) => {
+    const radius = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + w - radius, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+    ctx.lineTo(x + w, y + h - radius);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+    ctx.lineTo(x + radius, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+  };
+
+  const drawWrappedText = (ctx, text, x, y, maxWidth, lineHeight, maxLines = 2) => {
+    if(!text) return 0;
+    const isChinese = /[一-龥]/.test(text);
+    const units = isChinese ? text.split('') : text.split(' ');
+    const lines = [];
+    let line = '';
+    for(let i = 0; i < units.length; i++){
+      const unit = units[i];
+      const testLine = isChinese ? line + unit : (line ? line + ' ' + unit : unit);
+      if(ctx.measureText(testLine).width > maxWidth && line){
+        lines.push(line);
+        line = unit;
+      } else { line = testLine; }
+    }
+    if(line) lines.push(line);
+    const finalLines = lines.slice(0, maxLines);
+    finalLines.forEach((l, i) => { ctx.fillText(l, x, y + i * lineHeight); });
+    return finalLines.length;
+  };
+
+  const drawPaperNoise = () => {
+    cx.save();
+    cx.globalAlpha = 0.045;
+    for(let i = 0; i < 2400; i++){
+      const x = Math.random() * W;
+      const y = Math.random() * H;
+      const s = Math.random() * 1.5;
+      cx.fillStyle = Math.random() > 0.5 ? '#FFFFFF' : palette.paperDot;
+      cx.fillRect(x, y, s, s);
+    }
+    cx.restore();
+  };
+
+  const drawPill = (x, y, w, h, bg, text, color, fontSize) => {
+    cx.save();
+    cx.fillStyle = bg;
+    roundRect(cx, x, y, w, h, h / 2);
+    cx.fill();
+    cx.textAlign = 'center';
+    cx.textBaseline = 'middle';
+    cx.font = '800 ' + (fontSize || 14) + 'px ' + FLabel;
+    cx.fillStyle = color;
+    cx.fillText(text, x + w / 2, y + h / 2 + 1);
+    cx.restore();
+  };
+
+  // ===== Custom Identity Background =====
+  const isDarkBg = ['captain','maintainer','explorer'].includes(id.id);
+
+  switch(id.id){
+    case 'captain':
+      { // Deep ocean + lighthouse beams
+        const obg=cx.createLinearGradient(0,0,0,H);
+        obg.addColorStop(0,'#0a1628');obg.addColorStop(0.35,'#0d2137');
+        obg.addColorStop(0.7,'#112d45');obg.addColorStop(1,'#0a1f33');
+        cx.fillStyle=obg;cx.fillRect(0,0,W,H);
+
+        // Light beams
+        cx.save();cx.globalAlpha=0.07;
+        for(let i=0;i<6;i++){
+          const ang=-0.55+i*0.22;
+          cx.fillStyle='#4ade80';
+          cx.beginPath();cx.moveTo(W/2,140);
+          cx.lineTo(W/2+Math.sin(ang-0.08)*W,H);
+          cx.lineTo(W/2+Math.sin(ang+0.08)*W,H);cx.fill();
+        }
+        cx.restore();
+
+        // Subtle wave lines
+        cx.save();cx.globalAlpha=0.05;cx.strokeStyle='#4ade80';cx.lineWidth=1.5;
+        for(let i=0;i<8;i++){
+          const y=H*0.52+i*48;
+          cx.beginPath();
+          for(let x=0;x<W;x+=4){
+            const yy=y+Math.sin(x*0.014+i*1.7)*14;
+            if(x===0)cx.moveTo(x,yy);else cx.lineTo(x,yy);
+          }
+          cx.stroke();
+        }
+        cx.restore();
+
+        // Foggy glow
+        const cglow=cx.createRadialGradient(W/2,120,30,W/2,200,500);
+        cglow.addColorStop(0,'rgba(74,222,128,0.12)');cglow.addColorStop(1,'rgba(0,0,0,0)');
+        cx.fillStyle=cglow;cx.fillRect(0,0,W,H);
+      }
+      break;
+
+    case 'architect':
+      { // Blueprint grid on warm paper
+        const abg=cx.createLinearGradient(0,0,0,H);
+        abg.addColorStop(0,'#fffaf2');abg.addColorStop(0.5,'#fef5e7');
+        abg.addColorStop(1,'#f5e6d0');
+        cx.fillStyle=abg;cx.fillRect(0,0,W,H);
+
+        cx.save();cx.globalAlpha=0.07;cx.strokeStyle='#d97706';cx.lineWidth=1;
+        const gs=40;
+        for(let x=gs;x<W;x+=gs){cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,H);cx.stroke();}
+        for(let y=gs;y<H;y+=gs){cx.beginPath();cx.moveTo(0,y);cx.lineTo(W,y);cx.stroke();}
+        cx.restore();
+
+        // Blueprint corner marks
+        cx.save();cx.globalAlpha=0.16;cx.strokeStyle='#f59e0b';cx.lineWidth=2;
+        const cm=55,cl=28;
+        [[cm,cm,1,1],[W-cm,cm,-1,1],[cm,H-cm,1,-1],[W-cm,H-cm,-1,-1]].forEach(([ox,oy,sx,sy])=>{
+          cx.beginPath();cx.moveTo(ox,oy+cl*sy);cx.lineTo(ox,oy);cx.lineTo(ox+cl*sx,oy);cx.stroke();
+        });
+        cx.restore();
+
+        // Warm center glow
+        const aglow=cx.createRadialGradient(W/2,200,60,W/2,200,520);
+        aglow.addColorStop(0,'rgba(255,255,255,0.65)');aglow.addColorStop(1,'rgba(255,240,220,0)');
+        cx.fillStyle=aglow;cx.fillRect(0,0,W,H);
+      }
+      break;
+
+    case 'operator':
+      { // Playful bubbles/confetti on pink gradient
+        const pbg=cx.createLinearGradient(0,0,W,H);
+        pbg.addColorStop(0,'#ffe8f0');pbg.addColorStop(0.5,'#fce4ec');
+        pbg.addColorStop(1,'#fce4f0');
+        cx.fillStyle=pbg;cx.fillRect(0,0,W,H);
+
+        // Floating circles
+        cx.save();cx.globalAlpha=0.25;
+        const circles=[{x:80,y:100,r:45,c:'rgba(236,72,153,0.3)'},{x:200,y:200,r:30,c:'rgba(244,114,182,0.35)'},
+        {x:500,y:80,r:55,c:'rgba(236,72,153,0.2)'},{x:620,y:300,r:38,c:'rgba(244,114,182,0.28)'},
+        {x:100,y:400,r:50,c:'rgba(236,72,153,0.18)'},{x:400,y:150,r:25,c:'rgba(244,114,182,0.32)'},
+        {x:300,y:500,r:42,c:'rgba(236,72,153,0.2)'},{x:550,y:600,r:35,c:'rgba(244,114,182,0.22)'},
+        {x:680,y:750,r:48,c:'rgba(236,72,153,0.15)'},{x:150,y:700,r:32,c:'rgba(244,114,182,0.2)'},
+        {x:450,y:850,r:40,c:'rgba(236,72,153,0.16)'},{x:650,y:950,r:28,c:'rgba(244,114,182,0.2)'}];
+        circles.forEach(o=>{cx.fillStyle=o.c;cx.beginPath();cx.arc(o.x,o.y,o.r,0,Math.PI*2);cx.fill();});
+
+        // Small sparkles
+        cx.globalAlpha=0.4;cx.fillStyle='#ec4899';
+        for(let i=0;i<30;i++){cx.fillRect(Math.random()*W,Math.random()*H,2.5,2.5);}
+        cx.restore();
+
+        // Center glow
+        const pglow=cx.createRadialGradient(W/2,200,50,W/2,200,500);
+        pglow.addColorStop(0,'rgba(255,255,255,0.5)');pglow.addColorStop(1,'rgba(252,228,236,0)');
+        cx.fillStyle=pglow;cx.fillRect(0,0,W,H);
+      }
+      break;
+
+    case 'responder':
+      { // Soft flowing waves on teal-cyan
+        const tbg=cx.createLinearGradient(0,0,0,H);
+        tbg.addColorStop(0,'#e0f7fa');tbg.addColorStop(0.5,'#e0f2f1');
+        tbg.addColorStop(1,'#b2dfdb');
+        cx.fillStyle=tbg;cx.fillRect(0,0,W,H);
+
+        // Sine wave curves
+        cx.save();cx.globalAlpha=0.12;cx.lineWidth=2.5;
+        const waveColors=['rgba(6,182,212,0.5)','rgba(34,211,238,0.4)','rgba(6,182,212,0.3)'];
+        for(let w=0;w<3;w++){
+          cx.strokeStyle=waveColors[w];
+          cx.beginPath();
+          for(let x=0;x<W;x+=3){
+            const y=100+w*160+Math.sin(x*0.008+w*2.1)*60+Math.sin(x*0.003+w)*30;
+            if(x===0)cx.moveTo(x,y);else cx.lineTo(x,y);
+          }
+          cx.stroke();
+        }
+        cx.restore();
+
+        // Heartbeat line
+        cx.save();cx.globalAlpha=0.08;cx.strokeStyle='#06b6d4';cx.lineWidth=3;
+        cx.beginPath();cx.moveTo(0,H/2);
+        for(let x=0;x<W;x+=2){
+          const xx=x/W;const y=H/2+Math.sin(xx*Math.PI*3)*28+Math.sin(xx*Math.PI*7)*12;
+          cx.lineTo(x,y);
+        }
+        cx.stroke();cx.restore();
+
+        const tglow=cx.createRadialGradient(W/2,200,50,W/2,200,500);
+        tglow.addColorStop(0,'rgba(255,255,255,0.45)');tglow.addColorStop(1,'rgba(224,247,250,0)');
+        cx.fillStyle=tglow;cx.fillRect(0,0,W,H);
+      }
+      break;
+
+    case 'maintainer':
+      { // Geometric hex pattern on indigo
+        const mbg=cx.createLinearGradient(0,0,0,H);
+        mbg.addColorStop(0,'#1a1a3e');mbg.addColorStop(0.5,'#1e1e4a');
+        mbg.addColorStop(1,'#16163a');
+        cx.fillStyle=mbg;cx.fillRect(0,0,W,H);
+
+        // Hex grid
+        cx.save();cx.globalAlpha=0.06;cx.strokeStyle='#818cf8';cx.lineWidth=1.2;
+        const hexR=50,hx=hexR*Math.sqrt(3);
+        for(let row=0;row<Math.ceil(H/hexR/1.5)+1;row++){
+          for(let col=0;col<Math.ceil(W/hx)+2;col++){
+            const ox=col*hx+(row%2)*hx/2,oy=row*hexR*1.5;
+            cx.beginPath();
+            for(let i=0;i<6;i++){
+              const a=Math.PI/6+i*Math.PI/3;
+              const px=ox+hexR*Math.cos(a),py=oy+hexR*Math.sin(a);
+              if(i===0)cx.moveTo(px,py);else cx.lineTo(px,py);
+            }
+            cx.closePath();cx.stroke();
+          }
+        }
+        cx.restore();
+
+        // Accent dots at hex centers
+        cx.save();cx.globalAlpha=0.03;
+        for(let row=0;row<Math.ceil(H/hexR/1.5)+1;row++){
+          for(let col=0;col<Math.ceil(W/hx)+2;col++){
+            const ox=col*hx+(row%2)*hx/2,oy=row*hexR*1.5;
+            if((row+col)%3===0){cx.fillStyle='#818cf8';cx.beginPath();cx.arc(ox,oy,4,0,Math.PI*2);cx.fill();}
+          }
+        }
+        cx.restore();
+
+        const mglow=cx.createRadialGradient(W/2,180,40,W/2,200,480);
+        mglow.addColorStop(0,'rgba(129,140,248,0.1)');mglow.addColorStop(1,'rgba(0,0,0,0)');
+        cx.fillStyle=mglow;cx.fillRect(0,0,W,H);
+      }
+      break;
+
+    case 'explorer':
+      { // Starfield on violet-purple
+        const ebg=cx.createLinearGradient(0,0,0,H);
+        ebg.addColorStop(0,'#1a0a2e');ebg.addColorStop(0.5,'#1e1040');
+        ebg.addColorStop(1,'#150830');
+        cx.fillStyle=ebg;cx.fillRect(0,0,W,H);
+
+        // Stars - scattered dots
+        cx.save();
+        const stars=[];
+        // Use deterministic scatter based on id
+        let seed=42;
+        const rand=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
+        for(let i=0;i<120;i++){
+          const sx=rand()*W,sy=rand()*H,sr=rand()*2+0.5,sa=rand()*0.5+0.2;
+          cx.globalAlpha=sa;cx.fillStyle='#fff';
+          cx.beginPath();cx.arc(sx,sy,sr,0,Math.PI*2);cx.fill();
+          if(rand()>0.7){ // Cross stars
+            cx.globalAlpha=sa*0.6;
+            cx.fillRect(sx-sr*1.5,sy-0.5,sr*3,1);cx.fillRect(sx-0.5,sy-sr*1.5,1,sr*3);
+          }
+        }
+        cx.restore();
+
+        // Nebula glow
+        const eglow=cx.createRadialGradient(W*0.3,180,30,W*0.3,180,400);
+        eglow.addColorStop(0,'rgba(167,139,250,0.15)');eglow.addColorStop(1,'rgba(0,0,0,0)');
+        cx.fillStyle=eglow;cx.fillRect(0,0,W,H);
+        const eglow2=cx.createRadialGradient(W*0.7,350,25,W*0.7,350,380);
+        eglow2.addColorStop(0,'rgba(124,58,237,0.12)');eglow2.addColorStop(1,'rgba(0,0,0,0)');
+        cx.fillStyle=eglow2;cx.fillRect(0,0,W,H);
+      }
+      break;
+
+    case 'recorder':
+      { // Filmstrip on warm rose
+        const rbg=cx.createLinearGradient(0,0,0,H);
+        rbg.addColorStop(0,'#fef5f5');rbg.addColorStop(0.5,'#fef0f0');
+        rbg.addColorStop(1,'#fce4e4');
+        cx.fillStyle=rbg;cx.fillRect(0,0,W,H);
+
+        // Filmstrip perforations (top and bottom strips)
+        cx.save();cx.globalAlpha=0.12;cx.fillStyle='#e11d48';
+        const perfSize=8,perfGap=32,topY=20,botY=H-20;
+        for(let x=perfGap;x<W;x+=perfGap){
+          cx.fillRect(x-perfSize/2,topY-perfSize/2,perfSize,perfSize);
+          cx.fillRect(x-perfSize/2,botY-perfSize/2,perfSize,perfSize);
+        }
+
+        // Filmstrip border lines
+        cx.globalAlpha=0.1;cx.strokeStyle='#fb7185';cx.lineWidth=3;
+        cx.setLineDash([8,12]);
+        cx.beginPath();cx.moveTo(0,topY+perfSize);cx.lineTo(W,topY+perfSize);cx.stroke();
+        cx.beginPath();cx.moveTo(0,botY-perfSize);cx.lineTo(W,botY-perfSize);cx.stroke();
+        cx.setLineDash([]);
+        cx.restore();
+
+        // Photo frame corners
+        cx.save();cx.globalAlpha=0.1;cx.strokeStyle='#e11d48';cx.lineWidth=1.5;
+        const fcm=40,fcl=40;
+        [[fcm,fcm,1,1],[W-fcm,fcm,-1,1],[fcm,H-fcm,1,-1],[W-fcm,H-fcm,-1,-1]].forEach(([ox,oy,sx,sy])=>{
+          cx.beginPath();
+          cx.moveTo(ox+5,oy+fcl*sy);cx.lineTo(ox+5,oy+5);cx.lineTo(ox+fcl*sx+5,oy+5);
+          cx.stroke();
+        });
+        cx.restore();
+
+        const rglow=cx.createRadialGradient(W/2,200,50,W/2,200,500);
+        rglow.addColorStop(0,'rgba(255,255,255,0.55)');rglow.addColorStop(1,'rgba(254,240,240,0)');
+        cx.fillStyle=rglow;cx.fillRect(0,0,W,H);
+      }
+      break;
+
+    case 'connector':
+      { // Network nodes on teal
+        const nbg=cx.createLinearGradient(0,0,0,H);
+        nbg.addColorStop(0,'#e0f2f1');nbg.addColorStop(0.5,'#d4edec');
+        nbg.addColorStop(1,'#b2dfdb');
+        cx.fillStyle=nbg;cx.fillRect(0,0,W,H);
+
+        // Network nodes
+        const nodes=[{x:120,y:130},{x:350,y:80},{x:600,y:150},{x:180,y:350},
+          {x:500,y:320},{x:650,y:500},{x:100,y:550},{x:400,y:580},{x:560,y:720},
+          {x:300,y:800},{x:200,y:680},{x:620,y:860},{x:150,y:900},{x:480,y:950}];
+
+        // Connecting lines
+        cx.save();cx.globalAlpha=0.08;cx.strokeStyle='#0d9488';cx.lineWidth=1.5;
+        for(let i=0;i<nodes.length;i++){
+          for(let j=i+1;j<nodes.length;j++){
+            const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y;
+            const d=Math.sqrt(dx*dx+dy*dy);
+            if(d<250){
+              cx.beginPath();cx.moveTo(nodes[i].x,nodes[i].y);
+              cx.lineTo(nodes[j].x,nodes[j].y);cx.stroke();
+            }
+          }
+        }
+        cx.restore();
+
+        // Network node dots
+        cx.save();cx.globalAlpha=0.2;cx.fillStyle='#0d9488';
+        nodes.forEach(n=>{cx.beginPath();cx.arc(n.x,n.y,6,0,Math.PI*2);cx.fill();});
+        cx.globalAlpha=0.4;
+        nodes.forEach(n=>{cx.beginPath();cx.arc(n.x,n.y,3,0,Math.PI*2);cx.fill();});
+        cx.restore();
+
+        const nglow=cx.createRadialGradient(W/2,200,50,W/2,200,500);
+        nglow.addColorStop(0,'rgba(255,255,255,0.5)');nglow.addColorStop(1,'rgba(224,242,241,0)');
+        cx.fillStyle=nglow;cx.fillRect(0,0,W,H);
+      }
+      break;
+
+    default:
+      { // Fallback warm gradient
+        const fbg=cx.createLinearGradient(0,0,0,H);
+        fbg.addColorStop(0,palette.bgTop);fbg.addColorStop(0.52,palette.bgMid);
+        fbg.addColorStop(1,palette.bgBottom);
+        cx.fillStyle=fbg;cx.fillRect(0,0,W,H);
+        const fglow=cx.createRadialGradient(W/2,240,40,W/2,240,440);
+        fglow.addColorStop(0,'rgba(255,255,255,0.56)');fglow.addColorStop(1,'rgba(255,255,255,0)');
+        cx.fillStyle=fglow;cx.fillRect(0,0,W,H);
+      }
+  }
+
+  // Paper noise texture (all backgrounds)
+  drawPaperNoise();
+
+  // ===== Top badge (centered) =====
+  const badgeLabel = this.lang === 'zh' ? '鲸爸图鉴 · No.005' : 'Super Dad Profile · No.005';
+  cx.save();
+  cx.textAlign = 'center';
+  cx.font = '700 14px ' + FLabel;
+  cx.fillStyle = isDarkBg ? 'rgba(255,255,255,0.45)' : palette.textMute;
+  cx.fillText(badgeLabel, W/2, 52);
+  cx.font = '700 13px ' + FBody;
+  cx.fillStyle = isDarkBg ? 'rgba(255,255,255,0.32)' : 'rgba(151,136,121,0.7)';
+  cx.fillText("Father's Day 2026", W/2, 76);
+  cx.restore();
+
+  // ===== Hero: Identity Name =====
+  const roleName = this.lang === 'zh' ? id.name : id.nameEn;
+  const roleFontSize = roleName.length > 18 ? 48 : roleName.length > 12 ? 56 : 64;
+  cx.save();
+  cx.textAlign = 'center';
+  cx.font = '900 ' + roleFontSize + 'px ' + FTitle;
+  if(isDarkBg){
+    cx.shadowColor = 'rgba(0,0,0,0.3)';
+    cx.shadowBlur = 14;
+    cx.shadowOffsetY = 5;
+    cx.fillStyle = '#FFFFFF';
+  } else {
+    cx.shadowColor = 'rgba(0,0,0,0.06)';
+    cx.shadowBlur = 6;
+    cx.shadowOffsetY = 2;
+    const nameGrad = cx.createLinearGradient(W/2-180, 180, W/2+180, 180);
+    nameGrad.addColorStop(0, id.color1);
+    nameGrad.addColorStop(1, id.color2);
+    cx.fillStyle = nameGrad;
+  }
+  cx.fillText(roleName, W/2, 220);
+
+  // Decorative line under name
+  const lineW = 90;
+  const lineY = 260;
+  cx.shadowColor = 'transparent';
+  cx.shadowBlur = 0;
+  const lineGrad = cx.createLinearGradient(W/2 - lineW/2, 0, W/2 + lineW/2, 0);
+  lineGrad.addColorStop(0, id.color1);
+  lineGrad.addColorStop(1, id.color2);
+  cx.fillStyle = lineGrad;
+  roundRect(cx, W/2 - lineW/2, lineY, lineW, 3.5, 1.75);
+  cx.fill();
+  cx.restore();
+
+  // ===== Tagline =====
+  const tagline = this.lang === 'zh' ? id.tagline : id.taglineEn;
+  cx.save();
+  cx.textAlign = 'center';
+  cx.font = '700 23px ' + FBody;
+  cx.fillStyle = isDarkBg ? 'rgba(255,255,255,0.7)' : palette.textSoft;
+  drawWrappedText(cx, tagline, W/2, 305, 620, 32, 2);
+  cx.restore();
+
+  // ===== Dimension Bars =====
+  const barSectionY = 420;
+  const barLabel = this.lang === 'zh' ? '鲸爸能量值' : 'Dad Power Index';
+  drawPill(
+    W/2 - 85, barSectionY, 170, 30,
+    isDarkBg ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.04)',
+    barLabel,
+    isDarkBg ? 'rgba(255,255,255,0.65)' : palette.orange1,
+    13
+  );
+
+  const lblW = 120, barW = 320, barH = 14, barGap = 14;
+  const barRowW = lblW + barGap + barW;
+  const barOffsetX = (W - barRowW) / 2;
+
+  id.dims.forEach((dim, i) => {
+    const y = barSectionY + 44 + i * 36;
+
+    // Label
+    cx.textAlign = 'right';
+    cx.font = '700 17px ' + FBody;
+    cx.fillStyle = isDarkBg ? 'rgba(255,255,255,0.6)' : palette.textSoft;
+    cx.fillText(this.lang === 'zh' ? dim.label : dim.labelEn, barOffsetX + lblW - 10, y + barH);
+
+    // Bar track
+    cx.fillStyle = isDarkBg ? 'rgba(255,255,255,0.08)' : '#E8E0D5';
+    roundRect(cx, barOffsetX + lblW + barGap, y, barW, barH, barH / 2);
+    cx.fill();
+
+    // Bar fill
+    const fillW = barW * dim.v / 100;
+    const barGrad = cx.createLinearGradient(barOffsetX + lblW + barGap, 0, barOffsetX + lblW + barGap + barW, 0);
+    barGrad.addColorStop(0, id.color1);
+    barGrad.addColorStop(1, id.color2);
+    cx.fillStyle = barGrad;
+    roundRect(cx, barOffsetX + lblW + barGap, y, fillW, barH, barH / 2);
+    cx.fill();
+
+    // Value number
+    cx.textAlign = 'left';
+    cx.font = '800 15px ' + FLabel;
+    cx.fillStyle = isDarkBg ? 'rgba(255,255,255,0.7)' : palette.textMute;
+    cx.fillText(dim.v, barOffsetX + lblW + barGap + barW + 18, y + barH);
+  });
+
+  // ===== QR Code + CTA (adaptive to content) =====
+  const qrSize = 145;
+  const qrCenterX = W / 2;
+  const qrTopY = barsBottom + 60;
+  const qrX = qrCenterX - qrSize / 2;
+
+  if(App.qrImg){
+    // Shadow
+    cx.save();
+    cx.fillStyle = '#FFFFFF';
+    cx.shadowColor = 'rgba(0,0,0,0.18)';
+    cx.shadowBlur = 22;
+    cx.shadowOffsetY = 10;
+    roundRect(cx, qrX - 18, qrTopY - 18, qrSize + 36, qrSize + 36, 20);
+    cx.fill();
+    cx.restore();
+
+    // White card
+    cx.fillStyle = '#FFFFFF';
+    roundRect(cx, qrX - 14, qrTopY - 14, qrSize + 28, qrSize + 28, 16);
+    cx.fill();
+    cx.strokeStyle = isDarkBg ? 'rgba(255,255,255,0.15)' : palette.line;
+    cx.lineWidth = 1.2;
+    roundRect(cx, qrX - 14, qrTopY - 14, qrSize + 28, qrSize + 28, 16);
+    cx.stroke();
+
+    // QR image
+    cx.drawImage(App.qrImg, qrX, qrTopY, qrSize, qrSize);
+
+    // ===== CTA Title: "开始我的测试" =====
+    const ctaTitleY = qrTopY + qrSize + 50;
+    cx.save();
+    cx.textAlign = 'center';
+    cx.font = '900 36px ' + FTitle;
+    if(isDarkBg){
+      cx.fillStyle = '#FFFFFF';
+      cx.shadowColor = 'rgba(0,0,0,0.25)';
+      cx.shadowBlur = 8;
+      cx.shadowOffsetY = 3;
+    } else {
+      const ctaGrad = cx.createLinearGradient(0, ctaTitleY, 0, ctaTitleY + 40);
+      ctaGrad.addColorStop(0, id.color1);
+      ctaGrad.addColorStop(1, id.color2);
+      cx.fillStyle = ctaGrad;
+    }
+    cx.fillText(this.lang === 'zh' ? '开始我的测试' : 'Start My Test', qrCenterX, ctaTitleY);
+    cx.restore();
+
+    // CTA subtitle
+    cx.font = '700 16px ' + FBody;
+    cx.fillStyle = isDarkBg ? 'rgba(255,255,255,0.5)' : palette.textMute;
+    cx.fillText(
+      this.lang === 'zh' ? '扫描二维码 · 发现你的鲸爸属性' : 'Scan QR · Discover Your Dad Profile',
+      qrCenterX, ctaTitleY + 38
+    );
+  }
+
+  AS.posterUrl = cv.toDataURL('image/png');
+  document.getElementById('poster-img').src = AS.posterUrl;
+  document.getElementById('poster-modal').classList.add('active');
+},
+
+dlPoster(){
+  const link = document.createElement('a');
+  link.href = AS.posterUrl;
+  link.download = 'super-dad-profile-' + new Date().getTime() + '.png';
+  link.click();
+},
+
+      closeModal(){
+        document.getElementById('poster-modal').classList.remove('active');
+      },
+
+      restart(){
+        QE.answers=[];
+        QE.idx=0;
+        QE.save();
+        SM.to('start');
+      }
+    };
+
+
+    App.updateUI();
+  </script>
+</body>
+</html>
