@@ -534,7 +534,7 @@
   const qrSizeConst = 145;
   const W = 750, M = 50;
   const barsBottom = 420 + 44 + id.dims.length * 36;
-  const H = Math.max(1050, barsBottom + 60 + qrSizeConst + 50 + 36 + 38 + 60);
+  const H = Math.max(1050, barsBottom + 60 + qrSizeConst + 70 + 36 + 60);
 
   const cv = document.createElement('canvas');
   cv.width = W;
@@ -1052,7 +1052,7 @@
     cx.drawImage(qrImg, qrX, qrTopY, qrSize, qrSize);
 
     // CTA Title
-    const ctaTitleY = qrTopY + qrSize + 50;
+    const ctaTitleY = qrTopY + qrSize + 70;
     cx.save();
     cx.textAlign = 'center';
     cx.font = '900 36px ' + FTitle;
@@ -1069,14 +1069,6 @@
     }
     cx.fillText(self.lang === 'zh' ? '开始我的测试' : 'Start My Test', qrCenterX, ctaTitleY);
     cx.restore();
-
-    // CTA subtitle
-    cx.font = '700 16px ' + FBody;
-    cx.fillStyle = isDarkBg ? 'rgba(255,255,255,0.5)' : palette.textMute;
-    cx.fillText(
-      self.lang === 'zh' ? '扫描二维码 · 发现你的鲸爸属性' : 'Scan QR · Discover Your Dad Profile',
-      qrCenterX, ctaTitleY + 38
-    );
 
     finalizePoster();
   };
