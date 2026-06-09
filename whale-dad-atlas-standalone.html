@@ -1015,13 +1015,20 @@
     cx.fillText(dim.v, barOffsetX + lblW + barGap + barW + 18, y + barH);
   });
 
-  // ===== QR Code + CTA (adaptive to content) =====
+  // ===== QR Code + CTA (load then draw) =====
+  const self = this;
   const qrSize = 145;
   const qrCenterX = W / 2;
   const qrTopY = barsBottom + 60;
   const qrX = qrCenterX - qrSize / 2;
 
-  if(App.qrImg){
+  const finalizePoster = () => {
+    AS.posterUrl = cv.toDataURL('image/png');
+    document.getElementById('poster-img').src = AS.posterUrl;
+    document.getElementById('poster-modal').classList.add('active');
+  };
+
+  const drawQrAndCTA = (qrImg) => {
     // Shadow
     cx.save();
     cx.fillStyle = '#FFFFFF';
@@ -1042,9 +1049,9 @@
     cx.stroke();
 
     // QR image
-    cx.drawImage(App.qrImg, qrX, qrTopY, qrSize, qrSize);
+    cx.drawImage(qrImg, qrX, qrTopY, qrSize, qrSize);
 
-    // ===== CTA Title: "开始我的测试" =====
+    // CTA Title
     const ctaTitleY = qrTopY + qrSize + 50;
     cx.save();
     cx.textAlign = 'center';
@@ -1060,21 +1067,33 @@
       ctaGrad.addColorStop(1, id.color2);
       cx.fillStyle = ctaGrad;
     }
-    cx.fillText(this.lang === 'zh' ? '开始我的测试' : 'Start My Test', qrCenterX, ctaTitleY);
+    cx.fillText(self.lang === 'zh' ? '开始我的测试' : 'Start My Test', qrCenterX, ctaTitleY);
     cx.restore();
 
     // CTA subtitle
     cx.font = '700 16px ' + FBody;
     cx.fillStyle = isDarkBg ? 'rgba(255,255,255,0.5)' : palette.textMute;
     cx.fillText(
-      this.lang === 'zh' ? '扫描二维码 · 发现你的鲸爸属性' : 'Scan QR · Discover Your Dad Profile',
+      self.lang === 'zh' ? '扫描二维码 · 发现你的鲸爸属性' : 'Scan QR · Discover Your Dad Profile',
       qrCenterX, ctaTitleY + 38
     );
-  }
 
-  AS.posterUrl = cv.toDataURL('image/png');
-  document.getElementById('poster-img').src = AS.posterUrl;
-  document.getElementById('poster-modal').classList.add('active');
+    finalizePoster();
+  };
+
+  // Use cached QR if available, otherwise load it now
+  if(App.qrImg){
+    drawQrAndCTA(App.qrImg);
+  } else {
+    const shareUrl = 'https://maisiej2222-bit.github.io/dad-quiz/whale-dad-atlas-standalone.html';
+    const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=4&data='
+      + encodeURIComponent(shareUrl);
+    const qr = new Image();
+    qr.crossOrigin = 'anonymous';
+    qr.onload = () => { App.qrImg = qr; drawQrAndCTA(qr); };
+    qr.onerror = () => { finalizePoster(); };
+    qr.src = qrUrl;
+  }
 },
 
 dlPoster(){
