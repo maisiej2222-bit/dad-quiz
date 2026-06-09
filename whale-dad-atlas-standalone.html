@@ -514,8 +514,8 @@
       },
 
       preloadQR(){
-        // Canonical CDN URL for sharing — always encodes the same link
-        const shareUrl = 'https://cdn.jsdelivr.net/gh/maisiej2222-bit/dad-quiz@main/whale-dad-atlas-standalone.html';
+        // Canonical GitHub Pages URL — always encodes the same shareable link
+        const shareUrl = 'https://maisiej2222-bit.github.io/dad-quiz/whale-dad-atlas-standalone.html';
         const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=4&data='
           + encodeURIComponent(shareUrl);
         const qr = new Image();
