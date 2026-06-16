@@ -280,8 +280,9 @@ body::after {
     <div class="poster-modal" id="poster-modal" onclick="event.stopPropagation()">
       <div class="poster-content" id="poster-content"></div>
       <div class="poster-actions">
-        <button class="btn btn-outline btn-sm" onclick="closePoster()" data-i18n="poster.back">←<br>返回</button><button class="btn btn-outline btn-sm" onclick="regenerateCard()" data-i18n="poster.regenerate">🔄<br>重新生成</button><button class="btn btn-primary btn-sm" onclick="savePoster()" data-i18n="poster.save">💾<br>保存图片</button>
+        <button class="btn btn-outline btn-sm" onclick="closePoster()" data-i18n="poster.back">←<br>返回</button><button class="btn btn-outline btn-sm" onclick="regenerateCard()" data-i18n="poster.regenerate">🔄<br>重新生成</button><button class="btn btn-primary btn-sm" onclick="savePoster()" data-i18n="poster.save">📷<br>生成图片</button>
       </div>
+      <div class="save-hint" id="save-hint" style="display:none;text-align:center;color:var(--text-3);font-size:11px;padding:4px 16px 10px;font-weight:500" data-i18n="poster.hint">手机端长按图片保存 · 电脑端右键另存为</div>
     </div>
   </div>
 
@@ -308,7 +309,7 @@ var I18N={
     'ch.content.label':'想对孩子说的话','ch.content.ph':'写一句你想对孩子说的话。',
     'ch.sign.label':'署名','ch.sign.ph':'爸爸 / 老爸 / 你的爸爸 / 昵称','ch.submit':'生成卡片预览',
     'polish.soft':'✨ 更温柔','polish.light':'✨ 更自然','polish.orig':'↩ 恢复',
-    'poster.back':'←<br>返回','poster.regenerate':'🔄<br>重新生成','poster.save':'💾<br>保存图片',
+    'poster.back':'←<br>返回','poster.regenerate':'🔄<br>重新生成','poster.save':'📷<br>生成图片','poster.hint':'手机端长按图片保存 · 电脑端右键另存为',
     'poster.tag.fa':'给父亲的话','poster.tag.ch':'给儿女的话','poster.day':"Father's Day",'poster.header':'让爱开口',
     'fa.examples':'💡 心里话范例（点击填入）','fa.next':'下一句 →',
     'ch.examples':'💡 心里话范例（点击填入）','ch.next':'下一句 →',
@@ -330,7 +331,7 @@ var I18N={
     'ch.content.label':'What you want to say','ch.content.ph':'Write a few words for your child.',
     'ch.sign.label':'Signed','ch.sign.ph':'Dad / Your Dad / Nickname','ch.submit':'Preview Card',
     'polish.soft':'✨ Warmer','polish.light':'✨ Lighter','polish.orig':'↩ Undo',
-    'poster.back':'←<br>Back','poster.regenerate':'🔄<br>Regenerate','poster.save':'💾<br>Save Image',
+    'poster.back':'←<br>Back','poster.regenerate':'🔄<br>Regenerate','poster.save':'📷<br>Generate','poster.hint':'Long-press to save on mobile · Right-click save on desktop',
     'poster.tag.fa':'A Note for Dad','poster.tag.ch':'A Note for My Child','poster.day':"Father's Day",'poster.header':'Let Love Speak',
     'fa.examples':'💡 Examples (tap to fill)','fa.next':'Next →',
     'ch.examples':'💡 Examples (tap to fill)','ch.next':'Next →',
@@ -660,7 +661,7 @@ function regenerateCard(){
 // ═══════════════════════════════════════════
 // Poster & Toast
 // ═══════════════════════════════════════════
-function showPoster(html){var el=document.getElementById('poster-content');el.style.cssText='';el.innerHTML=html;document.getElementById('poster-overlay').classList.add('show');document.body.style.overflow='hidden'}
+function showPoster(html){var el=document.getElementById('poster-content');el.style.cssText='';el.innerHTML=html;var hint=document.getElementById('save-hint');if(hint)hint.style.display='none';document.getElementById('poster-overlay').classList.add('show');document.body.style.overflow='hidden'}
 function closePoster(e){if(e&&e.target!==document.getElementById('poster-overlay'))return;document.getElementById('poster-overlay').classList.remove('show');document.body.style.overflow=''}
 function isInAppBrowser(){
   var ua=navigator.userAgent||'';
@@ -671,23 +672,16 @@ function savePoster(){
   if(typeof html2canvas==='undefined'){toast(T('toast.saveErr'));return}
   toast(T('toast.saving'));
   html2canvas(el,{useCORS:true,scale:2,backgroundColor:null,allowTaint:true}).then(function(canvas){
-    // 所有环境：先生成 canvas，用 Blob 创建可下载/展示的图片
     canvas.toBlob(function(blob){
       var url=URL.createObjectURL(blob);
-      if(!isInAppBrowser()){
-        // 普通浏览器：直接下载
-        var a=document.createElement('a');a.href=url;
-        a.download=(LANG==='zh'?'让爱开口-父亲节卡片':'Let-Love-Speak-Card')+'.png';
-        document.body.appendChild(a);a.click();a.remove();
-        URL.revokeObjectURL(url);toast(T('toast.saved'));
-      }else{
-        // 微信/钉钉：展示图片，长按保存
-        el.style.cssText='width:100%;height:auto;overflow:visible;position:relative;aspect-ratio:auto';
-        el.innerHTML='<img src="'+url+'" style="width:100%;height:auto;display:block;-webkit-touch-callout:default" crossorigin="anonymous">';
-        var modal=document.getElementById('poster-modal');
-        if(modal)modal.style.overflow='hidden auto';
-        toast(T('toast.saved'));
-      }
+      // 统一：展示图片 + 保存提示
+      el.style.cssText='width:100%;height:auto;overflow:visible;position:relative;aspect-ratio:auto';
+      el.innerHTML='<img src="'+url+'" style="width:100%;height:auto;display:block;-webkit-touch-callout:default">';
+      var hint=document.getElementById('save-hint');
+      if(hint)hint.style.display='block';
+      var modal=document.getElementById('poster-modal');
+      if(modal)modal.style.overflow='hidden auto';
+      toast(T('toast.saved'));
     },'image/png');
   }).catch(function(e){console.error(e);toast(T('toast.saveErr'))});
 }
