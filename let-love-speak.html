@@ -642,7 +642,7 @@ function makeCard(type){
   var tag=T(type==='fa'?'poster.tag.fa':'poster.tag.ch');
   var th=POSTER_THEMES[Math.floor(Math.random()*POSTER_THEMES.length)];console.log("Theme:",th.name);
   var fSize=getPosterFontSize(c),lHeight=getPosterLineHeight(c);
-  var footBot=LANG==='zh'?'6%':'5%';
+  var footBot=LANG==='zh'?'5%':'4%';
   var illusBot=LANG==='zh'?'-1%':'-2%';
   var bodyBot=LANG==='zh'?'24%':'22%';
   var h='<div style="width:100%;height:100%;position:relative;overflow:hidden;background:'+th.bg+'">'+
