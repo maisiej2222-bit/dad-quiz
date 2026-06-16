@@ -167,9 +167,9 @@ body::after {
 
 .poster-overlay{display:none;position:fixed;inset:0;background:rgba(20,15,35,0.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:1000;justify-content:center;align-items:center;padding:20px}
 .poster-overlay.show{display:flex}
-.poster-modal{background:var(--glass-3);backdrop-filter:blur(36px) saturate(1.6);-webkit-backdrop-filter:blur(36px) saturate(1.6);border-radius:var(--r-lg);overflow:hidden;width:375px;max-width:95vw;border:1px solid var(--glass-border-3);box-shadow:0 32px 80px rgba(100,65,50,0.12),0 8px 24px rgba(100,65,50,0.06),0 0 0 1px rgba(255,252,248,0.45) inset;animation:popIn 0.45s cubic-bezier(0.16,1,0.3,1)}
+.poster-modal{background:var(--glass-3);backdrop-filter:blur(36px) saturate(1.6);-webkit-backdrop-filter:blur(36px) saturate(1.6);border-radius:var(--r-lg);overflow:hidden auto;width:375px;max-width:95vw;max-height:90vh;border:1px solid var(--glass-border-3);box-shadow:0 32px 80px rgba(100,65,50,0.12),0 8px 24px rgba(100,65,50,0.06),0 0 0 1px rgba(255,252,248,0.45) inset;animation:popIn 0.45s cubic-bezier(0.16,1,0.3,1)}
 @keyframes popIn{from{opacity:0;transform:scale(0.92) translateY(24px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.poster-content{width:375px;height:500px;max-width:100%;position:relative;overflow:hidden;contain:strict}
+.poster-content{width:375px;height:500px;max-width:100%;position:relative;overflow:hidden}
 .poster-content::before{content:'';position:absolute;top:-25%;left:-8%;width:260px;height:260px;background:radial-gradient(circle at 45% 40%,rgba(232,168,96,0.16),transparent 65%);filter:blur(40px);pointer-events:none}
 .poster-content::after{content:'';position:absolute;bottom:-20%;right:-10%;width:220px;height:220px;background:radial-gradient(circle at 50% 50%,rgba(212,149,154,0.12),transparent 60%);filter:blur(35px);pointer-events:none}
 .p-header{text-align:center;margin-bottom:10px;position:relative;z-index:1}
@@ -313,7 +313,7 @@ var I18N={
     'fa.examples':'💡 心里话范例（点击填入）','fa.next':'下一句 →',
     'ch.examples':'💡 心里话范例（点击填入）','ch.next':'下一句 →',
     'toast.empty':'请写下想说的话','toast.orig':'已恢复原文','toast.soft':'已优化得更温柔','toast.light':'已优化得更自然',
-    'toast.saving':'正在生成图片…','toast.saved':'图片已保存！','toast.saveErr':'保存失败，请重试'
+    'toast.saving':'正在生成图片…','toast.saved':'图片已保存！','toast.saveErr':'保存失败，请重试','toast.longpress':'长按上方图片即可保存到手机'
   },
   en:{
     'home.title':'Let Love Speak','home.sub':"Father's Day — say what you've been meaning to say.",
@@ -335,7 +335,7 @@ var I18N={
     'fa.examples':'💡 Examples (tap to fill)','fa.next':'Next →',
     'ch.examples':'💡 Examples (tap to fill)','ch.next':'Next →',
     'toast.empty':'Please write something first','toast.orig':'Restored original','toast.soft':'Made warmer','toast.light':'Made lighter',
-    'toast.saving':'Generating image…','toast.saved':'Image saved!','toast.saveErr':'Save failed, please retry'
+    'toast.saving':'Generating image…','toast.saved':'Image saved!','toast.saveErr':'Save failed, please retry','toast.longpress':'Long-press the image above to save'
   }
 };
 
@@ -645,8 +645,29 @@ function regenerateCard(){
 // ═══════════════════════════════════════════
 function showPoster(html){document.getElementById('poster-content').innerHTML=html;document.getElementById('poster-overlay').classList.add('show');document.body.style.overflow='hidden'}
 function closePoster(e){if(e&&e.target!==document.getElementById('poster-overlay'))return;document.getElementById('poster-overlay').classList.remove('show');document.body.style.overflow=''}
+function isInAppBrowser(){
+  var ua=navigator.userAgent||'';
+  return /dingtalk/i.test(ua)||/aliapp/i.test(ua)||/MicroMessenger/i.test(ua)||/WeChat/i.test(ua);
+}
 function savePoster(){
   var el=document.getElementById('poster-content');if(!el)return;
+  if(isInAppBrowser()){
+    toast(T('toast.saving'));
+    html2canvas(el,{useCORS:true,scale:2,backgroundColor:null,allowTaint:true}).then(function(canvas){
+      canvas.toBlob(function(blob){
+        var url=URL.createObjectURL(blob);
+        var tipText=T('toast.longpress');
+        // 移除所有约束样式，让图片完整展示
+        el.style.cssText='width:100%;height:auto;overflow:visible;contain:none;position:static;aspect-ratio:auto';
+        el.innerHTML='<img src="'+url+'" style="width:100%;height:auto;display:block;border-radius:8px;-webkit-touch-callout:default" id="save-img"><p style="text-align:center;color:#C08088;font-weight:700;font-size:14px;margin:8px 0">'+tipText+'</p>';
+        // 确保 modal 可以滚动看到完整图片
+        var modal=document.getElementById('poster-modal');
+        if(modal)modal.style.overflow='hidden auto';
+        toast(T('toast.longpress'));
+      },'image/png');
+    }).catch(function(e){console.error(e);toast(T('toast.saveErr'))});
+    return;
+  }
   toast(T('toast.saving'));
   html2canvas(el,{useCORS:true,scale:2,backgroundColor:null}).then(function(canvas){
     canvas.toBlob(function(blob){
