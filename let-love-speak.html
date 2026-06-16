@@ -33,7 +33,7 @@
 body {
   font-family:var(--sans); background:#FBF6F0; color:var(--text);
   line-height:1.6; -webkit-font-smoothing:antialiased;
-  min-height:100vh; display:flex; justify-content:center; overflow-x:hidden; position:relative;
+  min-height:100vh; display:flex; justify-content:center; align-items:center; overflow-x:hidden; position:relative;
 }
 
 body::before {
@@ -52,7 +52,7 @@ body::after {
   filter:blur(60px); pointer-events:none; z-index:0;
 }
 
-.app { width:100%; max-width:520px; min-height:100vh; position:relative; z-index:1; margin:0 auto; }
+.app { width:100%; max-width:520px; position:relative; z-index:1; margin:0 auto; }
 .app::before {
   content:''; position:fixed; bottom:-18%; left:-15%; width:420px; height:420px;
   background:radial-gradient(circle at 40% 55%, rgba(212,149,154,0.28) 0%, rgba(212,149,154,0.10) 30%, transparent 65%);
@@ -84,7 +84,7 @@ body::after {
 }
 
 .page {
-  display:none; padding:12px 16px 16px; min-height:100vh;
+  display:none; padding:12px 16px 16px;
   animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1); position:relative; z-index:1;
 }
 .page.active{display:block}
