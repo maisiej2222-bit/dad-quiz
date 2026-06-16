@@ -672,12 +672,10 @@ function savePoster(){
     toast(T('toast.saving'));
     html2canvas(el,{useCORS:true,scale:2,backgroundColor:null,allowTaint:true}).then(function(canvas){
       var dataUrl=canvas.toDataURL('image/png');
-      var tipText=T('toast.longpress');
-      el.style.cssText='width:100%;max-width:100%;height:auto;overflow:visible;position:relative;aspect-ratio:auto';
-      el.innerHTML='<div style="padding:0;margin:0"><img src="'+dataUrl+'" style="width:100%;height:auto;display:block;border-radius:8px;-webkit-touch-callout:default" id="save-img"><p style="text-align:center;color:#C08088;font-weight:700;font-size:14px;margin:8px 0 0 0">'+tipText+'</p></div>';
+      el.style.cssText='width:100%;height:auto;overflow:visible;position:relative;aspect-ratio:auto';
+      el.innerHTML='<img src="'+dataUrl+'" style="width:100%;height:auto;display:block;border-radius:8px;-webkit-touch-callout:default">';
       var modal=document.getElementById('poster-modal');
       if(modal)modal.style.overflow='hidden auto';
-      toast(T('toast.longpress'));
     }).catch(function(e){console.error(e);toast(T('toast.saveErr'))});
     return;
   }
