@@ -84,7 +84,7 @@ body::after {
 }
 
 .page {
-  display:none; padding:12px 14px 60px; min-height:100vh;
+  display:none; padding:12px 14px 20px; min-height:100vh;
   animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1); position:relative; z-index:1;
 }
 .page.active{display:block}
@@ -106,7 +106,7 @@ body::after {
 .home-desc{background:var(--glass-1);backdrop-filter:blur(28px) saturate(1.4);-webkit-backdrop-filter:blur(28px) saturate(1.4);border-radius:var(--r-md);padding:12px;margin:12px 0;border:1px solid var(--glass-border-1);box-shadow:0 2px 20px rgba(0,0,0,0.03),0 0 0 1px rgba(255,252,248,0.45) inset}
 .home-desc p{font-size:13px;color:var(--text-2);line-height:1.6;font-weight:500}
 
-.entry-btns{display:flex;flex-direction:column;gap:12px}
+.entry-btns{display:flex;flex-direction:column;gap:14px}
 .entry-card{background:var(--glass-2);backdrop-filter:blur(32px) saturate(1.5);-webkit-backdrop-filter:blur(32px) saturate(1.5);border-radius:var(--r-md);padding:16px 14px;border:1px solid var(--glass-border-2);cursor:pointer;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);text-align:left;box-shadow:0 2px 16px rgba(0,0,0,0.03),0 0 0 1px rgba(255,252,248,0.35) inset;position:relative;overflow:hidden}
 .entry-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.5s;border-radius:var(--r-md)}
 .entry-card.pink::before{background:linear-gradient(135deg,rgba(245,210,195,0.30),rgba(250,230,215,0.22))}
@@ -190,8 +190,8 @@ body::after {
 .back-btn:hover{background:rgba(255,252,249,0.68);color:#C08088}
 .toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(42,30,20,0.90);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#fff;padding:14px 30px;border-radius:100px;font-size:14px;font-weight:700;z-index:2000;pointer-events:none;animation:toastIn 0.35s cubic-bezier(0.16,1,0.3,1);box-shadow:0 8px 32px rgba(0,0,0,0.12)}
 @keyframes toastIn{from{opacity:0;transform:translate(-50%,-50%) scale(0.85)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
-@media(max-width:360px){.page{padding:8px 10px 50px}.page-title{font-size:18px}.home-title{font-size:20px}.entry-title{font-size:16px}.form-textarea{min-height:70px}}
-@media(max-height:700px){.home-orb{width:50px;height:50px;font-size:22px;margin-bottom:8px}.home-header{padding:4px 0 8px}.home-title{font-size:20px}.home-sub{font-size:12px}.home-desc{padding:8px;margin:8px 0}.home-desc p{font-size:12px;line-height:1.4}.entry-card{padding:12px 10px}.entry-icon{width:34px;height:34px;font-size:18px;margin-bottom:6px}.entry-title{font-size:16px}.form-textarea{min-height:60px}.page{padding:8px 12px 50px}.page-title{font-size:18px}.page-desc{font-size:12px;margin-bottom:10px}}
+@media(max-width:360px){.page{padding:8px 10px 20px}.page-title{font-size:18px}.home-title{font-size:20px}.entry-title{font-size:16px}.form-textarea{min-height:70px}}
+@media(max-height:700px){.home-orb{width:50px;height:50px;font-size:22px;margin-bottom:8px}.home-header{padding:4px 0 8px}.home-title{font-size:20px}.home-sub{font-size:12px}.home-desc{padding:8px;margin:8px 0}.home-desc p{font-size:12px;line-height:1.4}.entry-card{padding:12px 10px}.entry-icon{width:34px;height:34px;font-size:18px;margin-bottom:6px}.entry-title{font-size:16px}.form-textarea{min-height:60px}.page{padding:8px 12px 16px}.page-title{font-size:18px}.page-desc{font-size:12px;margin-bottom:10px}}
 </style>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
@@ -392,7 +392,7 @@ function goForm(type){
 // ═══════════════════════════════════════════
 // Tags & Radio
 // ═══════════════════════════════════════════
-// 心里话范例 — 12句 × 2种卡片
+// 心里话范例 — 16句 × 2种卡片
 var faExamplesZh=[
   '爸，最近身体还好吗||爸，最近身体还好吗？平时打电话你总说没事，但我知道你不爱去医院。天冷了记得多穿点，别老凑合。',
   '小时候你教我骑车||小时候你教我骑车，扶着后座跟在我后面跑。我摔了你也不扶，说再试一次。后来我学会了很多事，都是这样学会的。',
@@ -405,7 +405,11 @@ var faExamplesZh=[
   '爸爸，我也想跟你说句抱歉||爸爸，我也想跟你说句抱歉。青春期那几年总是对你没好脸色，你也没说什么。现在我懂了，你不是不在乎，你只是不知道怎么靠近。',
   '最近我学会了你爱吃的菜||最近我学会了你爱吃的那个菜，做得还是不如你的好吃。下次回来我们一起做吧，你教我。',
   '小时候你很忙||小时候你很忙，周末也经常加班。我有时候会怨你陪我的时间太少。现在自己工作了，才发现能按时回家是一种奢侈。你不容易。',
-  '爸，放心吧||爸，放心吧，我把自己的生活也打理好了。工作不错，朋友也好。你不用老惦记着，照顾好自己才是我最想看到的。'
+  '爸，放心吧||爸，放心吧，我把自己的生活也打理好了。工作不错，朋友也好。你不用老惦记着，照顾好自己才是我最想看到的。',
+  '记得你第一次送我上学||记得你第一次送我上学，我拽着你的衣角不想让你走。你蹲下来说放学就来接我。后来每次放学，你都在校门口等我。这么多年了，你从来没有失约过。',
+  '你在工厂干了多少年了||你在工厂干了多少年了？手上的老茧越来越厚，腰也越来越弯。我跟你说别干了，你总说闲不住。其实我知道，你是想多攒点给我。',
+  '你还记得吗||你还记得吗，我小时候你经常背着我爬楼梯。那时候觉得你好高好大，像一座山。现在我比你高了一个头，但在我心里，你还是那座山。',
+  '爸，有空出来吃顿饭吧||爸，有空出来吃顿饭吧。不是过节才吃的那种，就是平常的一天，我们坐下来，点你爱吃的菜，慢慢吃，慢慢聊。'
 ];
 var faExamplesEn=[
   "Dad, how's your health lately?||Dad, how's your health lately? You always say you're fine on the phone, but I know you avoid the doctor. Take care of yourself — and dress warm when it gets cold.",
@@ -419,7 +423,11 @@ var faExamplesEn=[
   "Dad, I owe you an apology||Dad, I owe you an apology. Through my teenage years, I gave you nothing but attitude, and you never pushed back. Now I know — you weren't indifferent. You just didn't know how to reach me.",
   "I learned to make your favorite dish||I learned to make your favorite dish — still not as good as yours. Next time I'm home, let's cook together. You can show me how.",
   "You worked a lot when I was young||You worked a lot when I was young. Weekends too. I used to resent that you weren't around enough. Now that I have a job, I realize making it home on time is a luxury. It couldn't have been easy for you.",
-  "Dad, don't worry about me||Dad, don't worry about me. I've got my life in order — good job, good friends. You don't need to keep checking on me. Just take care of yourself. That's all I want to see."
+  "Dad, don't worry about me||Dad, don't worry about me. I've got my life in order — good job, good friends. You don't need to keep checking on me. Just take care of yourself. That's all I want to see.",
+  "Remember the first day of school?||Remember the first day of school? I held onto your shirt and didn't want you to leave. You knelt down and promised you'd pick me up. Every day after that, you were there at the gate. In all these years, you never once broke that promise.",
+  "How many years at the factory now?||How many years at the factory now? Your hands are rougher, your back more bent. I tell you to stop working, and you say you'd be bored. The truth is, I know you're still trying to save up for me.",
+  "Do you still remember||Do you still remember how you used to carry me on your back up the stairs? Back then you seemed so tall, like a mountain. Now I'm a head taller than you, but in my heart, you're still that mountain.",
+  "Dad, let's grab a meal sometime||Dad, let's grab a meal sometime. Not a holiday dinner — just an ordinary day. Let's sit down, order what you like, eat slowly, and just talk."
 ];
 var chExamplesZh=[
   '今天你画了一幅画给我||今天你画了一幅画给我，画的是我们一家三口。你把我画得特别高，快顶到天花板了。我把这张画贴在冰箱上了，每天都能看到。',
@@ -433,7 +441,11 @@ var chExamplesZh=[
   '你现在工作很忙||你现在工作很忙，过年都不一定能回来。你不用担心家里，你妈和我都挺好的。你专心做好你的事，有空了就打个电话，没空也没事，我能理解。',
   '最近天气变冷了||最近天气变冷了，记得多穿点，别光顾着好看冻着自己。你从小就不爱穿秋裤，现在没人提醒你，自己要记得照顾好自己。',
   '你上一次回来||你上一次回来是三个月前，走的时候你妈在厨房偷偷抹眼泪。她不想让你看见，怕你担心。你知道吗，我们最骄傲的事就是你过得好。',
-  '你做什么工作||你做什么工作，其实我不太懂。但我知道你很努力，跟我年轻时一样。不用给自己太大压力，慢慢来，时间还长。'
+  '你做什么工作||你做什么工作，其实我不太懂。但我知道你很努力，跟我年轻时一样。不用给自己太大压力，慢慢来，时间还长。',
+  '你还记得小时候养的那只小猫吗||你还记得小时候养的那只小猫吗？你每天抱着它睡觉，后来它跑丢了，你哭了好几天。那时候你那么小，心就那么软。你一直是个善良的孩子。',
+  '你现在有自己的想法了||你现在有自己的想法了，有时候我们意见不一样。虽然偶尔会争执，但爸爸其实很欣慰——你长大了，有了自己的判断。这比什么都让我高兴。',
+  '你要去很远的地方工作了||你要去很远的地方工作了，我知道这是你一直想做的事情。去吧，不用担心我们。年轻人就是要出去闯一闯，爸爸支持你。',
+  '孩子，有时候爸爸也会累||孩子，有时候爸爸也会累，也会迷茫。但每次想到你，就觉得什么困难都能扛过去。你是爸爸最坚强的理由。'
 ];
 var chExamplesEn=[
   "Today you drew me a picture||Today you drew me a picture — our family of three. You drew me very tall, almost touching the ceiling. I put it on the fridge. I see it every day.",
@@ -447,14 +459,18 @@ var chExamplesEn=[
   "I know you're busy with work||I know you're busy with work — you might not even make it home for New Year. Don't worry about us. Your mom and I are fine. Focus on what you're doing. Call when you can. If you can't, I understand.",
   "The weather is getting cold these days||The weather is getting cold these days — dress warm, don't sacrifice comfort for fashion. You never liked wearing layers when you were little. Now no one's around to remind you, so take care of yourself, okay?",
   "Last time you visited||Last time you visited was three months ago. When you left, your mom was quietly wiping tears in the kitchen. She didn't want you to see and worry. You know what? Our proudest achievement is that you're doing well.",
-  "I don't fully understand your work||I don't fully understand your work, to be honest. But I know you work hard, just like I did at your age. Don't put too much pressure on yourself. Take your time. You've got plenty of it."
+  "I don't fully understand your work||I don't fully understand your work, to be honest. But I know you work hard, just like I did at your age. Don't put too much pressure on yourself. Take your time. You've got plenty of it.",
+  "Remember that little cat you had?||Remember that little cat you had as a child? You used to sleep holding it every night. When it ran away, you cried for days. You were so little, yet your heart was so gentle. You've always been a kind soul.",
+  "You have your own opinions now||You have your own opinions now. Sometimes we disagree. We might even argue, but honestly, Dad is proud — you've grown up and learned to think for yourself. That makes me happier than anything.",
+  "You're going to work far away||You're going to work far away now. I know it's what you've always wanted. Go. Don't worry about us. Young people should go see the world. Dad supports you completely.",
+  "Sometimes Dad gets tired too||Sometimes Dad gets tired too, and feels lost. But whenever I think of you, I find the strength to push through anything. You are my strongest reason to keep going."
 ];
 function getExamples(type){return LANG==='zh'?(type==='fa'?faExamplesZh:chExamplesZh):(type==='fa'?faExamplesEn:chExamplesEn)}
 function exFull(entry){var p=entry.indexOf('||');return p<0?entry:entry.slice(p+2)}
 function exFirst(entry){var p=entry.indexOf('||');return p<0?entry:entry.slice(0,p)}
 function renderExamples(type){
   if(ST._exIdx[type]===undefined)ST._exIdx[type]=0;
-  var all=getExamples(type),start=ST._exIdx[type],batch=all.slice(start,start+3),h='',taId=type==='fa'?'fa-content':'ch-content';
+  var all=getExamples(type),start=ST._exIdx[type],batch=all.slice(start,start+4),h='',taId=type==='fa'?'fa-content':'ch-content';
   for(var i=0;i<batch.length;i++){
     var n=start+i+1;
     h+='<div class="example-item" onclick="pickExample(\''+type+'\','+i+',this)" data-type="'+type+'" data-idx="'+i+'"><span class="ex-num">'+n+'</span>'+escHtml(exFirst(batch[i]))+'</div>';
@@ -470,7 +486,7 @@ function pickExample(type,i,el){
 }
 function nextExamples(type){
   var all=getExamples(type);
-  ST._exIdx[type]=(ST._exIdx[type]+3)%all.length;
+  ST._exIdx[type]=(ST._exIdx[type]+4)%all.length;
   renderExamples(type);
 }
 
@@ -630,8 +646,9 @@ function makeCard(type){
     '<div style="position:absolute;top:-15%;left:-8%;width:280px;height:280px;'+th.ob1+';filter:blur(45px);pointer-events:none"></div>'+
     '<div style="position:absolute;bottom:-15%;right:-10%;width:240px;height:240px;'+th.ob2+';filter:blur(40px);pointer-events:none"></div>'+
     '<div style="position:absolute;top:5%;left:24px;right:24px;text-align:center"><div class="p-tag" style="color:'+th.ac+'">'+T('poster.header').toUpperCase()+'</div><div class="p-title">'+tag+'</div></div>'+
-    '<div style="position:absolute;top:16%;bottom:'+bodyBot+';left:36px;right:36px;display:flex;align-items:center;justify-content:center;flex-direction:column;overflow:hidden"><p class="p-text" style="font-size:'+fSize+'px;line-height:'+lHeight+';max-height:100%;overflow:hidden">'+escHtml(c)+'</p><p class="p-name" style="font-size:'+(fSize>16?'15px':fSize>14?'14px':fSize>12?'13px':'12px')+'">— '+escHtml(s)+'</p></div>'+
-    '<div style="position:absolute;bottom:'+footBot+';left:24px;right:24px;text-align:center"><div class="p-day" style="color:'+th.ac+'">'+T('poster.day')+'</div><div class="p-illus" style="margin-top:2px"><img src="'+ILLUS[Math.floor(Math.random()*ILLUS.length)]+'" style="width:100%;max-width:80px;height:auto;border-radius:12px;opacity:0.85" alt="illustration"></div></div>'+
+    '<div style="position:absolute;top:16%;bottom:'+bodyBot+';left:36px;right:36px;display:flex;align-items:flex-start;justify-content:center;flex-direction:column;overflow:hidden"><p class="p-text" style="font-size:'+fSize+'px;line-height:'+lHeight+';max-height:100%;overflow:hidden;text-align:left;text-indent:2em">'+escHtml(c)+'</p><p class="p-name" style="font-size:'+(fSize>16?'15px':fSize>14?'14px':fSize>12?'13px':'12px')+';text-align:right;width:100%">— '+escHtml(s)+'</p></div>'+
+    '<div style="position:absolute;bottom:'+footBot+';left:24px"><img src="'+ILLUS[Math.floor(Math.random()*ILLUS.length)]+'" style="width:auto;max-width:160px;height:auto;border-radius:12px;opacity:0.85" alt="illustration"></div>'+
+    '<div style="position:absolute;bottom:'+footBot+';right:24px;text-align:right"><div class="p-day" style="color:'+th.ac+'">'+T('poster.day')+'</div></div>'+
     '</div>';
   showPoster(h);
   ST._lastType=type;
