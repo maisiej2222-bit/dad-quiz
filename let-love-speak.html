@@ -550,7 +550,7 @@ function polishTone(t,style,taId){
   // 5. 优化结尾：去掉任何旧收尾，加上新的祝福
   for(var l=0;l<closes.length;l++){var c=closes[l];if(t.indexOf(c)>c.length&&t.lastIndexOf(c)===t.length-c.length)t=t.slice(0,t.lastIndexOf(c)).replace(/[\s\n]*$/,'')}
   t=t.replace(/[\s\n]*$/,'');
-  if(!/[。！？]$/.test(t))t+='。';
+  if(!/[。！？.!?]$/.test(t))t+=(LANG==='zh'?'。':'.');
   t+='\n'+closes[idx];
   // 6. 清理多余空白
   t=t.replace(/\n{3,}/g,'\n\n').replace(/^\s+|\s+$/g,'');
