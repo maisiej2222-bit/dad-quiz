@@ -671,17 +671,13 @@ function savePoster(){
   if(isInAppBrowser()){
     toast(T('toast.saving'));
     html2canvas(el,{useCORS:true,scale:2,backgroundColor:null,allowTaint:true}).then(function(canvas){
-      canvas.toBlob(function(blob){
-        var url=URL.createObjectURL(blob);
-        var tipText=T('toast.longpress');
-        // 移除所有约束样式，让图片完整展示
-        el.style.cssText='width:100%;height:auto;overflow:visible;contain:none;position:static;aspect-ratio:auto';
-        el.innerHTML='<img src="'+url+'" style="width:100%;height:auto;display:block;border-radius:8px;-webkit-touch-callout:default" id="save-img"><p style="text-align:center;color:#C08088;font-weight:700;font-size:14px;margin:8px 0">'+tipText+'</p>';
-        // 确保 modal 可以滚动看到完整图片
-        var modal=document.getElementById('poster-modal');
-        if(modal)modal.style.overflow='hidden auto';
-        toast(T('toast.longpress'));
-      },'image/png');
+      var dataUrl=canvas.toDataURL('image/png');
+      var tipText=T('toast.longpress');
+      el.style.cssText='width:100%;max-width:100%;height:auto;overflow:visible;position:relative;aspect-ratio:auto';
+      el.innerHTML='<div style="padding:0;margin:0"><img src="'+dataUrl+'" style="width:100%;height:auto;display:block;border-radius:8px;-webkit-touch-callout:default" id="save-img"><p style="text-align:center;color:#C08088;font-weight:700;font-size:14px;margin:8px 0 0 0">'+tipText+'</p></div>';
+      var modal=document.getElementById('poster-modal');
+      if(modal)modal.style.overflow='hidden auto';
+      toast(T('toast.longpress'));
     }).catch(function(e){console.error(e);toast(T('toast.saveErr'))});
     return;
   }
