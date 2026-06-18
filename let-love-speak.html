@@ -478,7 +478,8 @@ function renderExamples(type){
     h+='<div class="example-item" onclick="pickExample(\''+type+'\','+i+',this)" data-type="'+type+'" data-idx="'+i+'"><span class="ex-num">'+n+'</span>'+escHtml(exFirst(batch[i]))+'</div>';
   }
   document.getElementById(type+'-examples').innerHTML=h;
-  document.getElementById(type+'-ex-page').textContent=(Math.floor(start/3)+1)+' / 4';
+  var totalPages=Math.ceil(all.length/4);
+  document.getElementById(type+'-ex-page').textContent=(Math.floor(start/4)+1)+' / '+totalPages;
 }
 function pickExample(type,i,el){
   var all=getExamples(type),text=exFull(all[ST._exIdx[type]+i]),taId=type==='fa'?'fa-content':'ch-content';
